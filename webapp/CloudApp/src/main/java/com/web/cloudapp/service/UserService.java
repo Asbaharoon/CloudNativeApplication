@@ -47,5 +47,21 @@ public class UserService implements UserDetailsService {
         return null;
     }
 
+    public boolean checkUserName(String username){
+        //String ePattern = "[A-Z0-9._%+-]+@?[A-Z0-9.-]+\\.?[A-Z]{2,4}";
+        String ePattern = "^\\w+[\\w-\\.]*\\@\\w+((-\\w+)|(\\w*))\\.[a-z]{2,3}$";
+        java.util.regex.Pattern p = java.util.regex.Pattern.compile(ePattern);
+        java.util.regex.Matcher m = p.matcher(username);
+        return m.matches();
+    }
 
-}
+    public boolean checkPassword(String password){
+        if(password.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$")){
+            return true;
+        }
+        else
+            return false;
+    }
+
+    }
+
