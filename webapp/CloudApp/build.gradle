@@ -42,8 +42,7 @@ dependencies {
     compile group: 'org.springframework.data', name: 'spring-data-jpa', version: '2.1.4.RELEASE'
     // https://mvnrepository.com/artifact/org.hibernate/hibernate-core
     compile group: 'org.hibernate', name: 'hibernate-core', version: '5.2.14.Final'
-
-
+    compile group: 'org.json', name: 'json', version: '20180813'
 
 }
 
