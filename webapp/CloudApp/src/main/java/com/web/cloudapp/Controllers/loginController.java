@@ -40,14 +40,21 @@ public class loginController {
     @RequestMapping(value= "/user/register", method= RequestMethod.POST)
     public @ResponseBody String register(@RequestBody User user) {
         Map<String,String> map = new HashMap<String, String>();
-        String hashpass = hashpwd(user.getPassword());
-        userRepository.save(new User(user.getUserName(),hashpass));
+        boolean userExists = findUser(user.getUserName());
+        if(userExists){
+            map.put("message","User Already Exists");
+            map.put("status",HttpStatus.CONFLICT.toString());
+            return new JSONObject(map).toString();
+        }
+        else {
+            String hashpass = hashpwd(user.getPassword());
+            userRepository.save(new User(user.getUserName(), hashpass));
 
-        map.put("message","Login Successful");
-        map.put("status",HttpStatus.OK.toString());
+            map.put("message", "Registered Successfully");
+            map.put("status", HttpStatus.OK.toString());
 
-        return new JSONObject(map).toString();
-
+            return new JSONObject(map).toString();
+        }
     }
 
 
