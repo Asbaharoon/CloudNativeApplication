@@ -1,5 +1,6 @@
 package com.web.cloudapp.Controllers;
 
+import com.web.cloudapp.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,6 +14,9 @@ import java.util.Date;
 @RestController
 public class loginController {
 
+    @Autowired
+    UserRepository userRepository;
+
     @RequestMapping("/")
     public Date sayTime(){
         Date date = new Date();
@@ -21,6 +25,6 @@ public class loginController {
 
     @RequestMapping(value= "/user/register", method= RequestMethod.POST)
     public void register(@RequestBody User user) {
-        System.out.println(user.getUserName());
+        userRepository.save(user);
     }
 }
