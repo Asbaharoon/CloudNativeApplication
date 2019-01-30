@@ -1,17 +1,26 @@
 package com.web.cloudapp.model;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name="usertable", schema="userinfo")
 public class User {
 
-    String userName;
-    String password;
+    @Id
+    private String userName;
+
+    private String password;
 
     public User(){
 
     }
 
     public User(String userName, String password) {
-        userName = this.userName;
-        password = this.password;
+        this.userName = userName ;
+        this.password = password;
     }
 
     public String getUserName() {
