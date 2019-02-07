@@ -24,7 +24,7 @@
   
   Open postman client
 
-  User Creation: Send the POST request http://localhost:8080/user/register and Select authentication as Basic Auth, if user doesnot     exists user gets created with message "Registered Succesfully", else we get message "User already exists" .
+  User Creation: Send the POST request http://localhost:8080/user/register, if user doesnot exists user gets created with message "Registered Succesfully", else we get message "User already exists" .
 
   Send the Get request http://localhost:8080/ and select Basic Auth after succesfully authenticating the request we get the current time else error message will be displayed "Unauthorised".
 
