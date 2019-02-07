@@ -10,8 +10,8 @@ ip_sub2=$6
 regionS2=$7
 ip_sub3=$8
 regionS3=$9
-port_1=$10
-port_2=$11
+port_1=${10}
+port_2=${11}
 csye_const=-csye6225-
 vpc_const=vpc
 ig_const=InternetGateway
@@ -36,10 +36,9 @@ fi
 echo 'Creating VPC....'
 
 vpc_id=$(aws ec2 create-vpc --cidr-block $ip_vpc --region $region1 --query [Vpc.VpcId] --output text)
-
-if [ -z $vpc_id.item[0] ]; then
+echo $vpc_id
+if [ -z $vpc_id ]; then
     echo 'Error creating VPC. Terminating' $vpc_id
-    bash ./csye6225-aws-networking-teardown.sh
     exit 1
 else
     echo 'VPC CREATED SUCCESSFULLY' $vpc_id
@@ -56,7 +55,6 @@ subnet3_id=$(aws ec2 create-subnet --availability-zone $regionS3 --vpc-id $vpc_i
 
 if [ -z $subnet1_id ]; then
     echo 'Error creating SUBNET 1. Terminating' $subnet1_id
-    bash ./csye6225-aws-networking-teardown.sh
     exit 1
 else
     echo 'SUBNET 1 CREATED SUCCESSFULLY' $subnet1_id
@@ -64,7 +62,6 @@ fi
 
 if [ -z $subnet2_id ]; then
     echo 'Error creating SUBNET 2. Terminating' $subnet2_id
-    bash ./csye6225-aws-networking-teardown.sh
     exit 1
 else
     echo 'SUBNET 2 CREATED SUCCESSFULLY' $subnet2_id
@@ -72,7 +69,6 @@ fi
 
 if [ -z $subnet3_id ]; then
     echo 'Error creating SUBNET 3. Terminating' $subnet3_id
-    bash ./csye6225-aws-networking-teardown.sh
     exit 1
 else
     echo 'SUBNET 3 CREATED SUCCESSFULLY' $subnet3_id
@@ -89,7 +85,6 @@ ig_id=$(aws ec2 create-internet-gateway --query [InternetGateway.InternetGateway
 
 if [ -z $ig_id ]; then
     echo 'Error creating INTERNET GATEWAY. Terminating' $ig_id
-    bash ./csye6225-aws-networking-teardown.sh
     exit 1
 else
     echo 'INTERNET GATEWAY CREATED SUCCESSFULLY' $ig_id
@@ -106,7 +101,6 @@ route_table_id=$(aws ec2 create-route-table --vpc-id $vpc_id --query [RouteTable
 
 if [ -z $route_table_id ]; then
     echo 'Error creating ROUTE TABLE. Terminating' $route_table_id
-    bash ./csye6225-aws-networking-teardown.sh
     exit 1
 else
     echo 'ROUTE TABLE CREATED SUCCESSFULLY' $route_table_id
@@ -131,7 +125,6 @@ sg_id=$(aws ec2 describe-security-groups --filters "Name=vpc-id,Values=$vpc_id" 
 
 if [ -z $sg_id ]; then
     echo 'No Default Security GroupId' $sg_id
-    bash ./csye6225-aws-networking-teardown.sh
     exit 1
 else
     echo 'Default Security GroupId' $sg_id
@@ -156,6 +149,6 @@ echo 'Creating Outbound Rules....'
 create_out22=$(aws ec2 authorize-security-group-egress --group-id $sg_id --protocol tcp --port $port_1 --cidr 0.0.0.0/0 --output text)
 create_out80=$(aws ec2 authorize-security-group-egress --group-id $sg_id --protocol tcp --port $port_2 --cidr 0.0.0.0/0 --output text)
 
-echo 'FINISHEDCOMPLETED STACK CREATION'
+echo 'FINISHED COMPLETED STACK CREATION'
 
 exit 0
