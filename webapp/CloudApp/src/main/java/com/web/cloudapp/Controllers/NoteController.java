@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.transaction.Transactional;
 import java.util.*;
 
 @RestController
@@ -66,4 +67,25 @@ public class NoteController {
             return new ResponseEntity(HttpStatus.FORBIDDEN);
         }
     }
+
+    @Transactional
+    @RequestMapping(value="/note/delete/{id}", method = RequestMethod.DELETE)
+    public  @ResponseBody ResponseEntity deleteNote(@PathVariable(value = "id") String id){
+        Note note = new Note();
+        User user = service.getUserName();
+        Map<String,String> map = new HashMap<String, String>();
+
+        String val = noteRepository.deleteNote(user,id);
+        System.out.println(val);
+        if(val == null){
+            map.put("message", "Note not found");
+            map.put("status", HttpStatus.BAD_REQUEST.toString());
+            return new ResponseEntity(map,HttpStatus.BAD_REQUEST);
+        }
+        map.put("message", "Note deleted successfully");
+        map.put("status", HttpStatus.NO_CONTENT.toString());
+        return new ResponseEntity(map,HttpStatus.NO_CONTENT);
+
+    }
+
 }
