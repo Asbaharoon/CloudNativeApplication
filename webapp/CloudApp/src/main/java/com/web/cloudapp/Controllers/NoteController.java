@@ -88,4 +88,39 @@ public class NoteController {
 
     }
 
+    @PutMapping("/note/{id}")
+    public @ResponseBody ResponseEntity updateBook(@RequestBody Note note, @PathVariable(value ="id") String noteId) {
+        Map<String,String> map = new HashMap<>();
+        User user = service.getUserName();
+        Note n;
+        if(noteRepository.findById(noteId).isPresent()) n=noteRepository.findById(noteId).get();
+        else n=null;
+        if(n==null){
+            map.put("message", "Note not found");
+            map.put("status", HttpStatus.NO_CONTENT.toString());
+            return new ResponseEntity(map,HttpStatus.NO_CONTENT);
+        }
+
+        if(n.getUserData()!=user){
+            map.put("message", "You are not authorized to modify the note");
+            map.put("status", HttpStatus.UNAUTHORIZED.toString());
+            return new ResponseEntity(map,HttpStatus.UNAUTHORIZED);
+        }
+
+        if(note.getTitle()==null || note.getContent()==null){
+            map.put("message", "Note title / note content cannot be blank");
+            map.put("status", HttpStatus.BAD_REQUEST.toString());
+            return new ResponseEntity(map,HttpStatus.BAD_REQUEST);
+        }
+
+        else {
+            note.setUserData(user);
+            noteRepository.save(note);
+            map.put("message", "Note updated Successfully");
+            map.put("status", HttpStatus.OK.toString());
+            return new ResponseEntity(map,HttpStatus.OK);
+
+        }
+
+    }
 }
