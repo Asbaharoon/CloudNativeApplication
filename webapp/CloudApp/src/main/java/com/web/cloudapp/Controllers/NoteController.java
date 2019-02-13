@@ -44,10 +44,26 @@ public class NoteController {
     }
 
     @RequestMapping(value ="/note")
-    public @ResponseBody ResponseEntity getNote(){
+    public @ResponseBody ResponseEntity getAllNote(){
         List<Note> notes = new ArrayList<>();
         User user =service.getUserName();
         notes =noteRepository.getAllNotes(user);
         return new ResponseEntity(notes,HttpStatus.OK);
+    }
+
+    @RequestMapping(value ="/note/{id}", method = RequestMethod.GET)
+    public @ResponseBody
+    ResponseEntity getNote(@PathVariable(value = "id") String id){
+        Note note = new Note();
+        User user = service.getUserName();
+        note = noteRepository.getNote(user,id);
+        if(note == null ){
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
+        else if(user.getUserName().equals(note.getUserData().getUserName())){
+            return new ResponseEntity(note,HttpStatus.OK);
+        }else{
+            return new ResponseEntity(HttpStatus.FORBIDDEN);
+        }
     }
 }
