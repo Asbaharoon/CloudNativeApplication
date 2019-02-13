@@ -22,4 +22,17 @@ public class NoteRepositoryImpl implements NoteRepositoryCustom {
         return query.getResultList();
 
     }
+
+    @Override
+    public Note getNote(User user, String id){
+        Query query = entityManager.createNativeQuery("SELECT * FROM modelinfo.notetable as n WHERE n.id = ? ", Note.class);
+        query.setParameter(1,id);
+        if(query.getResultList().isEmpty()){
+            return null;
+        }
+        Note n = (Note) query.getSingleResult();
+        System.out.println(n.getTitle());
+        return n;
+    }
+
 }
