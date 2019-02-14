@@ -6,7 +6,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="usertable", schema="userinfo")
+@Table(name="usertable", schema="modelinfo")
 public class User {
 
     @Id
@@ -37,5 +37,10 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    @Override
+    public String toString() {
+        return userName;
     }
 }

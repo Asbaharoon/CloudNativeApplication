@@ -3,6 +3,8 @@ package com.web.cloudapp.service;
 import com.web.cloudapp.Repository.UserRepository;
 import com.web.cloudapp.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -62,6 +64,14 @@ public class UserService implements UserDetailsService {
         else
             return false;
     }
+
+    public User getUserName(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (!(authentication instanceof AnonymousAuthenticationToken)) {
+            String currentUserName = authentication.getName();
+            return findUsername(currentUserName);
+        }
+    return null;}
 
     }
 

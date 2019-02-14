@@ -71,10 +71,10 @@ public class loginController {
             userRepository.save(new User(user.getUserName(), hashpass));
 
             map.put("message", "Registered Successfully");
-            map.put("status", HttpStatus.OK.toString());
+            map.put("status", HttpStatus.CREATED.toString());
 
             //return new JSONObject(map).toString();
-            return new ResponseEntity(map, HttpStatus.OK);
+            return new ResponseEntity(map, HttpStatus.CREATED);
         }
     }
 
