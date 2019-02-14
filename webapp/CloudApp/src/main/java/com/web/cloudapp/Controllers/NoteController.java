@@ -31,6 +31,10 @@ public class NoteController {
             map.put("status", HttpStatus.BAD_REQUEST.toString());
             return new ResponseEntity(map,HttpStatus.BAD_REQUEST);
         }
+        else if(note.getTitle().equals("")){
+            map.put("status", HttpStatus.BAD_REQUEST.toString());
+            return new ResponseEntity(map,HttpStatus.BAD_REQUEST);
+        }
         User user = service.getUserName();
         note.setUserData(user);
         noteRepository.save(note);
@@ -106,6 +110,10 @@ public class NoteController {
         else if(n.getUserData()!=user){
             map.put("status", HttpStatus.UNAUTHORIZED.toString());
             return new ResponseEntity(map,HttpStatus.UNAUTHORIZED);
+        }
+        if(note.getTitle().equals("")){
+            map.put("status", HttpStatus.BAD_REQUEST.toString());
+            return new ResponseEntity(map,HttpStatus.BAD_REQUEST);
         }
         else {
             n.setTitle(note.getTitle());
