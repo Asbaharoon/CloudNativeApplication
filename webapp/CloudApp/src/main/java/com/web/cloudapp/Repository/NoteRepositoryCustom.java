@@ -8,7 +8,6 @@ import java.util.List;
 public interface NoteRepositoryCustom {
     List<Note> getAllNotes(User user);
 
-    Note getNote(User user, String id);
+    Note getNote(String id);
 
-    String deleteNote(User user,String id);
 }

@@ -24,7 +24,7 @@ public class NoteRepositoryImpl implements NoteRepositoryCustom {
     }
 
     @Override
-    public Note getNote(User user, String id){
+    public Note getNote(String id){
         Query query = entityManager.createNativeQuery("SELECT * FROM modelinfo.notetable as n WHERE n.id = ? ", Note.class);
         query.setParameter(1,id);
         if(query.getResultList().isEmpty()){
@@ -35,16 +35,4 @@ public class NoteRepositoryImpl implements NoteRepositoryCustom {
         return n;
     }
 
-    @Override
-    public String deleteNote(User user, String id) {
-
-        Query query = entityManager.createNativeQuery("DELETE FROM modelinfo.notetable WHERE id = ? ", Note.class);
-        query.setParameter(1, id);
-        int a = query.executeUpdate();
-        if (a == 0) {
-            return null;
-        }
-        System.out.println("Deleted Successfully");
-        return "deleted";
-    }
 }
