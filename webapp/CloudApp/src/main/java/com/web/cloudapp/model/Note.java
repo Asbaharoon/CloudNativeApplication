@@ -48,7 +48,6 @@ public class Note {
     private User userData;
 
     public Note() {
-        this.id = UUID.randomUUID().toString();
     }
 
     public String getId() {
