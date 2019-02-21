@@ -28,7 +28,7 @@ echo $amiId
 webSecurityGroupTagValue=csye6225-webapp
 dbSecurityGroupTagValue=csye6225-rds
 
-stackId=$(aws cloudformation create-stack --stack-name $stack_name --template-body file://applicationjson.json --parameters ParameterKey=webSecurityGroupTag,ParameterValue=$webSecurityGroupTagValue ParameterKey=dbSecurityGroupTag,ParameterValue=$dbSecurityGroupTagValue ParameterKey=keyTag,ParameterValue=$keyTagValue ParameterKey=amiId,ParameterValue=$amiId ParameterKey=ec2InstanceTag,ParameterValue=$ec2InstanceTagVal ParameterKey=DBUSER,ParameterValue=$DBUSER ParameterKey=DBPWD,ParameterValue=$DBPWD  --query [StackId] --capabilities CAPABILITY_NAMED_IAM --output text)
+stackId=$(aws cloudformation create-stack --stack-name $stack_name --template-body file://csye6225-cf-application.json --parameters ParameterKey=webSecurityGroupTag,ParameterValue=$webSecurityGroupTagValue ParameterKey=dbSecurityGroupTag,ParameterValue=$dbSecurityGroupTagValue ParameterKey=keyTag,ParameterValue=$keyTagValue ParameterKey=amiId,ParameterValue=$amiId ParameterKey=ec2InstanceTag,ParameterValue=$ec2InstanceTagVal ParameterKey=DBUSER,ParameterValue=$DBUSER ParameterKey=DBPWD,ParameterValue=$DBPWD  --query [StackId] --capabilities CAPABILITY_NAMED_IAM --output text)
 
 echo $stackId
 

@@ -33,5 +33,15 @@ public class AttachmentRepositoryImpl implements AttachmentCustom {
         Attachment a = (Attachment) query.getSingleResult();
         return a;
     }
+    public Attachment deleteAttachment(String id){
+        Query query = entityManager.createNativeQuery("DELETE FROM modelinfo.attachmenttable WHERE attachment_id = ? ", Attachment.class);
+        query.setParameter(1,id);
+        query.executeUpdate();
+        if(query.getResultList().isEmpty()){
+            return null;
+        }
+        Attachment a = (Attachment) query.getSingleResult();
+        return a;
+    }
 
 }
