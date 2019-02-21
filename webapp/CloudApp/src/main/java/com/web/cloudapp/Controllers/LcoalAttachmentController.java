@@ -76,6 +76,11 @@ public class LcoalAttachmentController {
 
         a.setUrl(attatchmentUrl);
 
+       String attachType = attatchmentUrl.substring(attatchmentUrl.indexOf('.') + 1);
+       a.setAtt_type(attachType);
+       a.setSize(file.getSize());
+       //attachmentRepository.save(attachment);
+
         file.transferTo(path);
             //    a.setUrl(url);
                 as.add(a);

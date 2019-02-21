@@ -17,6 +17,12 @@ public class Attachment {
     @Column(name = "url")
     private String url;
 
+    @Column(name = "attachment_type")
+    private String att_type;
+
+    @Column(name = "attachment_size")
+    private Long size;
+
     public Attachment(){
         aid= UUID.randomUUID().toString();
     }
@@ -37,4 +43,19 @@ public class Attachment {
         this.url = url;
     }
 
+    public String getAtt_type() {
+        return att_type;
+    }
+
+    public void setAtt_type(String att_type) {
+        this.att_type = att_type;
+    }
+
+    public Long getSize() {
+        return size;
+    }
+
+    public void setSize(Long size) {
+        this.size = size;
+    }
 }

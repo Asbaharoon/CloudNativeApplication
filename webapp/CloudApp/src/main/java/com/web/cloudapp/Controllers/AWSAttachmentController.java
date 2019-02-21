@@ -67,6 +67,9 @@ public class AWSAttachmentController  {
 
                 String url = awsService.uploadFile(file,a.getId());
                 a.setUrl(url);
+                String attachType = url.substring(url.indexOf('.') + 1);
+                a.setAtt_type(attachType);
+                a.setSize(file.getSize());
                 as.add(a);
                 System.out.println("COME HERE");
                 System.out.println(note.getId());
@@ -100,6 +103,47 @@ public class AWSAttachmentController  {
     }
 
 
+    //Delete
+    @DeleteMapping("/note/{id}/attachments/{idAttachment}")
+    public @ResponseBody ResponseEntity deleteAttachment( @PathVariable(value ="id") String noteId,@PathVariable(value ="idAttachment") String attachId) {
+        Map<String,String> map = new HashMap<>();
+        User user = service.getUserName();
+        Note n;
+        Attachment a = null;
+        String url ="";
+        if(noteRepository.findById(noteId).isPresent()) n=noteRepository.findById(noteId).get();
+        else n=null;
+        if(n==null ){
+            map.put("status", HttpStatus.NOT_FOUND.toString());
+            return new ResponseEntity(map,HttpStatus.NOT_FOUND);
+        }
+        else if(n.getUserData()!=user){
+            map.put("status", HttpStatus.UNAUTHORIZED.toString());
+            return new ResponseEntity(map,HttpStatus.UNAUTHORIZED);
+        }
+        else if(n.getUserData().getUserName().equals(user.getUserName())){
+            List<Attachment> as = n.getAttachments();
+            int count = 0 ;
+            for(Attachment attach : as){
+                if(attach.getId().equals(attachId)){
+                    System.out.println(attach.getUrl().split("/")[4]);
+                    awsService.deleteFileFromS3Bucket(attach.getUrl().split("/")[4]);
+                    url = awsService.deleteFileFromS3Bucket(attach.getUrl().split("/")[4]);
+                    count +=1;
+                    a = attach;
+                    noteRepository.getNote(noteId).getAttachments().remove(a);
+                    attachmentRepository.delete(a);
+                    System.out.println(attachmentRepository.getAllAttachments(n));
+                    break;
+                }
+            }
+
+        }
+
+        return new ResponseEntity(map,HttpStatus.NO_CONTENT);
+    }
+
+
     //Update
     @PutMapping("/note/{id}/attachments/{idAttachment}")
     public @ResponseBody ResponseEntity updateAttachment( @PathVariable(value ="id") String noteId,@PathVariable(value ="idAttachment") String attachId,@RequestParam("file") MultipartFile file) {
@@ -128,51 +172,12 @@ public class AWSAttachmentController  {
                     url = awsService.uploadFile(file,attach.getId());
                     count +=1;
                     a = attach;
-                    attachmentRepository.delete(a);
-                    System.out.println(attachmentRepository.getAllAttachments(n));
-                    break;
-                }
-            }
-
-        }
-
-        return new ResponseEntity(map,HttpStatus.NO_CONTENT);
-    }
-
-
-    //Delete
-    @DeleteMapping("/note/{id}/attachments/{idAttachment}")
-    public @ResponseBody ResponseEntity deleteAttachment( @PathVariable(value ="id") String noteId,@PathVariable(value ="idAttachment") String attachId) {
-        Map<String,String> map = new HashMap<>();
-        User user = service.getUserName();
-        Note n;
-        Attachment a = null;
-        if(noteRepository.findById(noteId).isPresent()) n=noteRepository.findById(noteId).get();
-        else n=null;
-        if(n==null ){
-            map.put("status", HttpStatus.NOT_FOUND.toString());
-            return new ResponseEntity(map,HttpStatus.NOT_FOUND);
-        }
-        else if(n.getUserData()!=user){
-            map.put("status", HttpStatus.UNAUTHORIZED.toString());
-            return new ResponseEntity(map,HttpStatus.UNAUTHORIZED);
-        }
-        else if(n.getUserData().getUserName().equals(user.getUserName())){
-            List<Attachment> as = n.getAttachments();
-            int count = 0 ;
-            for(Attachment attach : as){
-                if(attach.getId().equals(attachId)){
-                    System.out.println(attach.getUrl().split("/")[4]);
-                    awsService.deleteFileFromS3Bucket(attach.getUrl().split("/")[4]);
-                    count +=1;
-                    a = attach;
                 }
             }
             if(a!=null) {
-                System.out.println("I came to deletle");
+                a.setUrl(url);
                 as.remove(count);
-                attachmentRepository.delete(a);
-                System.out.println("I came to deletle"+as.size());
+                as.add(a);
                 n.setAttachments(as);
                 noteRepository.save(n);
                 return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -183,5 +188,4 @@ public class AWSAttachmentController  {
 
         return new ResponseEntity(map,HttpStatus.BAD_REQUEST);
     }
-
 }
