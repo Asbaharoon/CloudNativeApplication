@@ -43,6 +43,8 @@ dependencies {
     // https://mvnrepository.com/artifact/org.hibernate/hibernate-core
     compile group: 'org.hibernate', name: 'hibernate-core', version: '5.2.14.Final'
     compile group: 'org.json', name: 'json', version: '20180813'
+    compile "com.amazonaws:aws-java-sdk-s3:1.11.422"
+    compile "org.springframework.cloud:spring-cloud-starter-aws:2.0.0.RELEASE"
 
 }
 

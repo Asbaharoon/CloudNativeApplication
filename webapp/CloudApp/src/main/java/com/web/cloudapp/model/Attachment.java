@@ -1,45 +1,32 @@
 package com.web.cloudapp.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import java.util.UUID;
 
 @Entity
-@Table(name = "attachmenttable",schema = "modelinfo")
-@EntityListeners(AuditingEntityListener.class)
+@Table(name = "attachmenttable",schema="modelinfo")
 public class Attachment {
 
     @Id
-    @GeneratedValue(generator = "uuid")
-    @GenericGenerator(name = "uuid", strategy = "uuid")
-    String attachmentId;
+    @Column(name = "attachment_id")
+    private String aid;
 
     @Column(name = "url")
-    String url;
+    private String url;
 
-    @Column(name = "type")
-    String type;
-
-    @Column(name="size")
-    Long size;
-
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "id", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JsonIgnore
-    private Note noteData;
-
-    public String getAttachmentId() {
-        return attachmentId;
+    public Attachment(){
+        aid= UUID.randomUUID().toString();
     }
 
-    public void setAttachmentId(String attachmentId) {
-        this.attachmentId = attachmentId;
+    public String getId() {
+        return aid;
+    }
+
+    public void setId(String aid) {
+        this.aid = aid;
     }
 
     public String getUrl() {
@@ -50,27 +37,4 @@ public class Attachment {
         this.url = url;
     }
 
-    public Note getNoteData() {
-        return noteData;
-    }
-
-    public void setNoteData(Note noteData) {
-        this.noteData = noteData;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public Long getSize() {
-        return size;
-    }
-
-    public void setSize(Long size) {
-        this.size = size;
-    }
 }

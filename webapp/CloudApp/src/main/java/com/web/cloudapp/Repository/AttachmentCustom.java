@@ -10,5 +10,6 @@ public interface AttachmentCustom{
     List<Attachment> getAllAttachments(Note note);
 
     Attachment getAttachment(String id);
+     Attachment deleteAttachment(String id);
 
 }
