@@ -5,18 +5,17 @@
 
     "Mappings": {
        
-        "Networking" : {
+      "Networking" : {
           "PublicSubnetOne": {
-            "CIDR": "10.0.1.0/24"
-			}, 
-			"PublicSubnetTwo": {
-			"CIDR": "10.0.2.0/24"
-			},
-			"PublicSubnetThree": {
-			"CIDR": "10.0.3.0/24"
-			}
-			
-		}
+            "CIDR": "10.0.0.0/24"
+			     }, 
+			   "PublicSubnetTwo": {
+			   "CIDR": "10.0.1.0/24"
+			     },
+			   "PublicSubnetThree": {
+			   "CIDR": "10.0.17.0/24"
+			     }
+		  }
     },
 
     "Resources" : {
@@ -26,7 +25,6 @@
               "CidrBlock" : "10.0.0.0/16",
               "EnableDnsSupport" : "true",
               "EnableDnsHostnames" : "true",
-              "InstanceTenancy" : "dedicated",
               "Tags": [{"Key": "Name","Value": {"Fn::Join":["",[{"Ref":"AWS::StackName"},"-csye6225-vpc"]]}}]
            }
         },
@@ -58,7 +56,7 @@
           },
           "PublicRoute": {
             "Type": "AWS::EC2::Route",
-			"DependsOn" : "AttachGateway",
+			      "DependsOn" : "AttachGateway",
             "Properties": {
               "RouteTableId": {
                 "Ref": "PublicRouteTable"
@@ -83,16 +81,7 @@
                   "CIDR"
                 ]
               },
-              "AvailabilityZone": {
-                "Fn::Select": [
-                  "0",
-                  {
-                    "Fn::GetAZs": {
-                      "Ref": "AWS::Region"
-                    }
-                  }
-                ]
-              },
+              "AvailabilityZone" : "us-east-1a",
               "Tags": [
                 {
                   "Key": "Name",
@@ -128,16 +117,7 @@
             "CIDR"
           ]
         },
-        "AvailabilityZone": {
-          "Fn::Select": [
-            "1",
-            {
-              "Fn::GetAZs": {
-                "Ref": "AWS::Region"
-              }
-            }
-          ]
-        },
+        "AvailabilityZone" : "us-east-1e",
         "Tags": [
           {
             "Key": "Name",
@@ -172,16 +152,7 @@
             "CIDR"
           ]
         },
-        "AvailabilityZone": {
-          "Fn::Select": [
-            "2",
-            {
-              "Fn::GetAZs": {
-                "Ref": "AWS::Region"
-              }
-            }
-          ]
-        },
+        "AvailabilityZone" : "us-east-1d",
         "Tags": [
           {
             "Key": "Name",
@@ -201,8 +172,36 @@
         }
       }
     }
-	
-		  
-}
+},
+ "Outputs" : {
+    "vpcId" : {
+      "Description" : "The ID of web subnet",
+      "Value" : {"Ref" : "myVPC"},
+      "Export" : {
+        "Name" : "networkVpcId"
+      }
+    },
+    "publicSubnetIdOne" : {
+      "Description" : "The ID of web server security group",
+      "Value" : {"Ref" : "PublicSubnetOne"},
+      "Export" : {
+        "Name" : "publicSubnetOne"
+      }
+    },
+        "publicSubnetIdTwo" : {
+      "Description" : "The ID of web server security group",
+      "Value" : {"Ref" : "PublicSubnetTwo"},
+      "Export" : {
+        "Name" : "publicSubnetTwo"
+      }
+    },
+        "publicSubnetIdThree" : {
+      "Description" : "The ID of web server security group",
+      "Value" : {"Ref" : "PublicSubnetThree"},
+      "Export" : {
+        "Name" : "publicSubnetThree"
+      }
+    }  
+  }
 		  
 }    
