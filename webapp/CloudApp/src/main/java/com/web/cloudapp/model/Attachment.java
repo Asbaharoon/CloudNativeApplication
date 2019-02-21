@@ -22,6 +22,12 @@ public class Attachment {
     @Column(name = "url")
     String url;
 
+    @Column(name = "type")
+    String type;
+
+    @Column(name="size")
+    Long size;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -50,5 +56,21 @@ public class Attachment {
 
     public void setNoteData(Note noteData) {
         this.noteData = noteData;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public Long getSize() {
+        return size;
+    }
+
+    public void setSize(Long size) {
+        this.size = size;
     }
 }
