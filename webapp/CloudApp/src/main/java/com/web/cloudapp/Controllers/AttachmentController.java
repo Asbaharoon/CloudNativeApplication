@@ -81,6 +81,10 @@ public class AttachmentController {
 //        fout.close();
 
         attachmentRepository.save(attachment);
+        String attachType = attatchmentUrl.substring(attatchmentUrl.indexOf('.') + 1);
+        attachment.setType(attachType);
+        attachment.setSize(file.getSize());
+        attachmentRepository.save(attachment);
         return new ResponseEntity(attachment,HttpStatus.CREATED);
     }
 
