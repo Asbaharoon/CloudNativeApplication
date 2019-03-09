@@ -1,21 +1,20 @@
 package com.web.cloudapp.service;
 
-import java.io.*;
-
+import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.*;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.GetObjectRequest;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.S3Object;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import com.amazonaws.services.s3.AmazonS3;
 import org.springframework.web.multipart.MultipartFile;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import java.io.File;
+
+import java.io.*;
 import java.util.Date;
 
 @Service
@@ -47,33 +46,31 @@ public class AwsService {
 
     public String uploadFile(MultipartFile file1, String filename) {
         String fileUrl = "";
-        System.out.println(s3.getS3AccountOwner());
         try {
             File file = convertMultiPartToFile(file1);
             String fileName = generateFileName(file1);
-            System.out.println(fileName);
             endpointUrl="https://s3.amazonaws.com";
             fileUrl = endpointUrl + "/" + nameCardBucket + "/" + fileName;
             s3.putObject(new PutObjectRequest(nameCardBucket,
-                    fileName, file)
-                    .withCannedAcl(CannedAccessControlList.PublicRead));
-
+                    fileName, file).withCannedAcl(CannedAccessControlList.PublicRead));
+            new File(file.getPath()).delete();
         }catch (Exception e) {
             e.printStackTrace();
         }
         return fileUrl;
     }
 
-    public String deleteFileFromS3Bucket(String fileNameToDelete) {
+    //Deleting the file from S3 bucket
+    public boolean deleteFileFromS3Bucket(String fileNameToDelete) {
         String fileName = fileNameToDelete.substring(fileNameToDelete.lastIndexOf("/") + 1);
         s3.deleteObject(nameCardBucket,fileName);
-        return "Successfully deleted";
+        return true;
     }
+
 
     public ResponseEntity<byte[]> downloadFile(String fileName){
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         try{
-            System.out.println("Downloading an object");
             S3Object s3object = s3.getObject(new GetObjectRequest(nameCardBucket, fileName));
             InputStream inputStream =s3object.getObjectContent();
 
@@ -83,8 +80,6 @@ public class AwsService {
                 outputStream.write(picturebuffer, 0, l);
                 l = inputStream.read(picturebuffer);
             }
-
-
         }catch (Exception e) {
             e.printStackTrace();
         }
@@ -92,5 +87,4 @@ public class AwsService {
         headers.set("content-type", "image/jpg");
         return new ResponseEntity<byte[]>(outputStream.toByteArray(), headers, HttpStatus.OK);
     }
-
 }
