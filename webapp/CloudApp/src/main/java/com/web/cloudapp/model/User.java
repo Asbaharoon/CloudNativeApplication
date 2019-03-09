@@ -6,12 +6,14 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="usertable", schema="modelinfo")
+@Table(name="usertable")
 public class User {
 
     @Id
+    @Column(name="username",nullable = false)
     private String userName;
 
+    @Column(name = "password",nullable = false)
     private String password;
 
     public User(){

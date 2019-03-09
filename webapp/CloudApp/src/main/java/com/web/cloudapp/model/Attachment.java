@@ -1,13 +1,10 @@
 package com.web.cloudapp.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.UUID;
 
 @Entity
-@Table(name = "attachmenttable",schema="modelinfo")
+@Table(name = "attachmenttable")
 public class Attachment {
 
     @Id
@@ -57,5 +54,10 @@ public class Attachment {
 
     public void setSize(Long size) {
         this.size = size;
+    }
+
+    @Override
+    public String toString() {
+        return url;
     }
 }
