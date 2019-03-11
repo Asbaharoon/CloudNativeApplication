@@ -25,7 +25,7 @@ public class CloudappApplicationTests {
         User user = new User();
         user.setPassword("Northeastern@Cloud67");
         user.setUserName("cloudapp@gmail.com");
-        assertTrue(userService.checkCredentials(user));
+        assertTrue(userService.checkCredentialsTest(user));
 
     }
 }
