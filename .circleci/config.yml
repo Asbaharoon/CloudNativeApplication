@@ -45,10 +45,8 @@ jobs:
             sudo apt-get install python3  
             sudo apt-get install awscli
             aws --version
-            aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID}
-            aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY}
-            aws configure set default.region ${AWS_REGION}
             aws configure list
+            aws s3 sync /home/circleci/project/codedeploy_artifact s3://${s3_bucket}
       - run:
           name: Make CodeDeploy API call
           command: |
