@@ -12,7 +12,8 @@ jobs:
             cd webapp/CloudApp
             pwd
             ls -al
-            ./gradlew war
+            ./gradlew clean
+            ./gradlew build
             cd build/libs
             ls -al
             cd ../../..
