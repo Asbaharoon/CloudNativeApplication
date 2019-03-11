@@ -41,7 +41,8 @@ jobs:
       - run:
           name: Upload Artifact to S3
           command: |
-            echo "Hello"
+            echo "Hello Upload Artifact to S3"
+            aws s3 sync /home/circleci/project/codedeploy_artifact/csye6225-web-app-${CIRCLE_BUILD_NUM}.zip s3://${s3_bucket}
       - run:
           name: Make CodeDeploy API call
           command: |
