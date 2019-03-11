@@ -77,9 +77,10 @@
                 "Action": [
                     "s3:*"
                 ],
-                "Resource": [{
-                  "Fn::Join": [ "", ["arn:aws:s3:::", { "Ref": "s3BucketName"}]]
-               }]
+                "Resource": [
+                  {"Fn::Join": [ "", ["arn:aws:s3:::", { "Ref": "s3BucketName"}]]},
+                  {"Fn::Join": [ "", ["arn:aws:s3:::", { "Ref": "s3BucketName"},"/*"]]}
+               ]
             }
         ]
     },
