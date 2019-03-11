@@ -12,7 +12,7 @@ jobs:
             cd webapp/CloudApp
             pwd
             ls -al
-            gradle build
+            ./gradlew war
             cd build/libs
             ls -al
             cd ../../..
