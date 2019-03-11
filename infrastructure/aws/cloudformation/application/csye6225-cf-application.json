@@ -22,6 +22,18 @@
   },
    "DBPWD" : {
   "Type" : "String"
+  },
+  "accountID": {
+    "Type": "String"
+  },
+  "awsRegion": {
+    "Type": "String"
+  },
+  "applicationName": {
+    "Type": "String"
+  },
+  "s3BucketName": {
+    "Type": "String"
   }
  },
  "Resources" : {
