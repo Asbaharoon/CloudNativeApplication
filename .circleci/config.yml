@@ -42,6 +42,12 @@ jobs:
           name: Upload Artifact to S3
           command: |
             echo "Hello Upload Artifact to S3"
+            sudo apt-get install python-pip
+            sudo pip install awscli
+            aws --version
+            aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID}
+            aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY}
+            aws configure set default.region ${AWS_REGION}
             aws s3 sync /home/circleci/project/codedeploy_artifact/csye6225-web-app-${CIRCLE_BUILD_NUM}.zip s3://${s3_bucket}
       - run:
           name: Make CodeDeploy API call
