@@ -15,17 +15,15 @@ import static org.junit.Assert.assertTrue;
 //@SpringBootTest
 public class CloudappApplicationTests {
 
-   // @Autowired
-   // UserService userService;
+   //@Autowired
+    //UserService userService;
 
     @Test
     public void checkCredentials() {
 
+        UserService userService = new UserService();
         CloudappApplicationTests cloudTests = new CloudappApplicationTests();
-        User user = new User();
-        user.setPassword("Northeastern@Cloud67");
-        user.setUserName("cloudapp@gmail.com");
-        assertTrue(1==1);
+        assertTrue(userService.checkPasswordTest("Northeastern@Cloud67"));
 
     }
 }
