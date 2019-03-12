@@ -12,10 +12,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 @Entity
-@Table(name="notetable", schema="modelinfo")
+@Table(name="notetable")
 @EntityListeners(AuditingEntityListener.class)
 @JsonIgnoreProperties(value = {"createdAt", "updatedAt"},
         allowGetters = true)
@@ -35,22 +34,25 @@ public class Note {
     @Column(name="created_on",nullable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     @CreatedDate
+    @JsonIgnore
     private Date createdAt;
 
     @Column(name="lastupdated_on",nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     @LastModifiedDate
+    @JsonIgnore
     private Date updatedAt;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn( name="id", nullable=false)
-    private List<Attachment> attachments;
-
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_name", nullable = false)
+    @JoinColumn(name = "username", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
     private User userData;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn( name="id", nullable=false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private List<Attachment> attachments;
 
     public Note() {
     }
@@ -105,5 +107,10 @@ public class Note {
 
     public void setAttachments(List<Attachment> attachments) {
         this.attachments = attachments;
+    }
+
+    @Override
+    public String toString() {
+        return id;
     }
 }

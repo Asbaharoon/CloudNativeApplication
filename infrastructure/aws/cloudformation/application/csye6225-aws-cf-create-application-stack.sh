@@ -25,10 +25,18 @@ amiId=$(aws ec2 describe-images --filters "Name=tag:Name,Values=centos_assignmen
 
 echo $amiId
 
+s3BucketName=$(aws s3api list-buckets --query "Buckets[*].Name" --output text)
+
+account_id=$(aws sts get-caller-identity --query "Account" --output text)
+
+region="us-east-1"
+
+applicationName="csye6225-webapp"
+
 webSecurityGroupTagValue=csye6225-webapp
 dbSecurityGroupTagValue=csye6225-rds
 
-stackId=$(aws cloudformation create-stack --stack-name $stack_name --template-body file://csye6225-cf-application.json --parameters ParameterKey=webSecurityGroupTag,ParameterValue=$webSecurityGroupTagValue ParameterKey=dbSecurityGroupTag,ParameterValue=$dbSecurityGroupTagValue ParameterKey=keyTag,ParameterValue=$keyTagValue ParameterKey=amiId,ParameterValue=$amiId ParameterKey=ec2InstanceTag,ParameterValue=$ec2InstanceTagVal ParameterKey=DBUSER,ParameterValue=$DBUSER ParameterKey=DBPWD,ParameterValue=$DBPWD  --query [StackId] --capabilities CAPABILITY_NAMED_IAM --output text)
+stackId=$(aws cloudformation create-stack --stack-name $stack_name --template-body file://csye6225-cf-application.json --parameters ParameterKey=webSecurityGroupTag,ParameterValue=$webSecurityGroupTagValue ParameterKey=dbSecurityGroupTag,ParameterValue=$dbSecurityGroupTagValue ParameterKey=keyTag,ParameterValue=$keyTagValue ParameterKey=amiId,ParameterValue=$amiId ParameterKey=ec2InstanceTag,ParameterValue=$ec2InstanceTagVal ParameterKey=DBUSER,ParameterValue=$DBUSER ParameterKey=DBPWD,ParameterValue=$DBPWD ParameterKey=accountID,ParameterValue=$account_id ParameterKey=awsRegion,ParameterValue=$region ParameterKey=s3BucketName,ParameterValue=$s3BucketName ParameterKey=applicationName,ParameterValue=$applicationName  --query [StackId] --capabilities CAPABILITY_NAMED_IAM --output text)
 
 echo $stackId
 
