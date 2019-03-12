@@ -11,21 +11,18 @@ import org.springframework.test.context.junit4.SpringRunner;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-//@RunWith(SpringRunner.class)
-//@SpringBootTest
+@RunWith(SpringRunner.class)
+@SpringBootTest
 public class CloudappApplicationTests {
 
-   // @Autowired
-   // UserService userService;
+   @Autowired
+    UserService userService;
 
     @Test
     public void checkCredentials() {
 
         CloudappApplicationTests cloudTests = new CloudappApplicationTests();
-        User user = new User();
-        user.setPassword("Northeastern@Cloud67");
-        user.setUserName("cloudapp@gmail.com");
-        assertTrue(1==1);
+        assertTrue(userService.checkPasswordTest("Northeastern@Cloud67"));
 
     }
 }
