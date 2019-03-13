@@ -110,7 +110,7 @@
       "Path": "/",
       "Roles": [{
         "Ref": "CodeDeployEC2ServiceRole"
-      }]
+      } ]
       }
   },
   "ec2Instance" : {
