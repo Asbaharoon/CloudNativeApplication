@@ -61,5 +61,5 @@ jobs:
             sudo service codedeploy-agent start
             sudo service codedeploy-agent status
             aws deploy get-application --application-name csye6225-webapp
-            aws deploy register-application-revision --application-name “csye6225-webapp” --s3-location bucket=${s3_bucket},bundleType=zip,key=csye6225-web-app-${CIRCLE_BUILD_NUM}.zip --description “first deploy”
-            aws deploy create-deployment --application-name csye6225-webapp --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name csye6225-webapp-deployment --s3-location bucket=${s3_bucket},bundleType=zip,key=csye6225-web-app-${CIRCLE_BUILD_NUM}.zip --description “testing”
+            aws deploy register-application-revision --application-name "csye6225-webapp" --s3-location bucket=${s3_bucket},bundleType=zip,key=csye6225-web-app-${CIRCLE_BUILD_NUM}.zip --description "first deploy"
+            aws deploy create-deployment --application-name csye6225-webapp --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name csye6225-webapp-deployment --s3-location bucket=${s3_bucket},bundleType=zip,key=csye6225-web-app-${CIRCLE_BUILD_NUM}.zip --description "testing"
