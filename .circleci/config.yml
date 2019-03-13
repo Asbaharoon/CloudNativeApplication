@@ -52,10 +52,10 @@ jobs:
           name: Make CodeDeploy API call
           command: |
             echo "Hello CodeDeploy"
-            sudo apt-get install ruby
+            sudo apt-get install ruby wget
             echo "Ruby installed"
             aws configure list
-            aws s3 cp s3://aws-codedeploy-us-east-1/latest/install . --region us-east-1
+            wget https://aws-codedeploy-us-east-1.s3.amazonaws.com/latest/install
             sudo chmod +x ./install
             sudo ./install auto
             sudo service codedeploy-agent start
