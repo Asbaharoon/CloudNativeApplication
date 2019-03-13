@@ -54,6 +54,8 @@ jobs:
             echo "Hello CodeDeploy"
             sudo apt-get install ruby wget
             echo "Ruby installed"
+            aws configure set region us-east-1
+            aws configure
             aws configure list
             wget https://aws-codedeploy-us-east-1.s3.amazonaws.com/latest/install
             sudo chmod +x ./install
@@ -61,6 +63,5 @@ jobs:
             sudo service codedeploy-agent start
             sudo service codedeploy-agent status
             aws deploy get-application --application-name csye6225-webapp
-            aws deploy get-deployment-group --application-name csye6225-webapp --deployment-group-name csye6225-webapp-deployment
             aws deploy register-application-revision --application-name “csye6225-webapp” --s3-location bucket=${s3_bucket},bundleType=zip,key=csye6225-web-app-${CIRCLE_BUILD_NUM}.zip --description “first deploy”
             aws deploy create-deployment --application-name csye6225-webapp --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name csye6225-webapp-deployment --s3-location bucket=${s3_bucket},bundleType=zip,key=csye6225-web-app-${CIRCLE_BUILD_NUM}.zip --description “testing”
