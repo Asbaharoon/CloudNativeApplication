@@ -104,10 +104,22 @@
      "VpcId" : {"Fn::ImportValue" : "networkVpcId"} 
     }
   },
+  "CodeDeployEC2ServiceRoleInstanceProfile": {
+    "Type": "AWS::IAM::InstanceProfile",
+    "Properties": {
+      "Path": "/",
+      "Roles": [{
+        "Ref": "CodeDeployEC2ServiceRole"
+      } ]
+      }
+  },
   "ec2Instance" : {
    "Type" : "AWS::EC2::Instance",
     "Properties" : {
      "Tags" : [ {"Key" : "Name", "Value" : {"Ref" : "ec2InstanceTag"}} ],
+     "IamInstanceProfile": {
+      "Ref": "CodeDeployEC2ServiceRoleInstanceProfile"
+     },
      "ImageId" : { "Ref" : "amiId" },
      "KeyName" : { "Ref" : "keyTag" },
      "InstanceType" : "t2.micro",
