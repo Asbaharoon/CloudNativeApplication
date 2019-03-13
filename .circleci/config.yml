@@ -54,8 +54,6 @@ jobs:
             echo "Hello CodeDeploy"
             sudo apt-get install ruby wget
             echo "Ruby installed"
-            aws configure set region us-east-1
-            aws configure
             aws configure list
             wget https://aws-codedeploy-us-east-1.s3.amazonaws.com/latest/install
             sudo chmod +x ./install
