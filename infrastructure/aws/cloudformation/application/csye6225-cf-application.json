@@ -295,7 +295,7 @@
           {
             "Type": "KEY_AND_VALUE",
             "Key": "Name",
-            "Value": "ec2InstanceTag"
+            "Value": {"Ref" : "ec2InstanceTag"}
           }
         ],
         "ServiceRoleArn": {
