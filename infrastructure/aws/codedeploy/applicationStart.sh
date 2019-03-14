@@ -1,4 +1,4 @@
 #!/bin/bash
+sudo systemctl stop tomcat.service
 cd /opt/tomcat/webapps
-sudo rm -rf CloudApp
 sudo systemctl start tomcat.service
