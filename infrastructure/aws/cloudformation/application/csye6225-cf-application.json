@@ -157,6 +157,9 @@
                 {
                   "Fn::Sub": "echo 'JAVA_OPTS=\"$JAVA_OPTS -Dcloud.aws.region.static=us-east-1\"' >> /opt/tomcat/bin/setenv.sh"
                 },
+                {
+                  "Fn::Sub": "echo 'JAVA_OPTS=\"$JAVA_OPTS -Daws.s3.bucketname=${s3BucketName}\"' >> /opt/tomcat/bin/setenv.sh"
+                },
                 "chmod +x /opt/tomcat/bin/setenv.sh",
                 "chown tomcat:tomcat /opt/tomcat/bin/setenv.sh",
                 "sudo service tomcat restart "
