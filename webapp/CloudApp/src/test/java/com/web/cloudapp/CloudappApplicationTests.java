@@ -25,7 +25,6 @@ public class CloudappApplicationTests {
         CloudappApplicationTests cloudTests = new CloudappApplicationTests();
         assertTrue(userService.checkPasswordTest("Northeastern@Cloud67"));
 
-        
     }
 }
 
