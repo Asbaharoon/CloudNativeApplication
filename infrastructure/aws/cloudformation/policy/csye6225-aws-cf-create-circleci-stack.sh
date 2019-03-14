@@ -7,7 +7,7 @@ if [ -z "$stack_name" ]; then
   exit 1
 fi
 
-s3BucketName=$(aws s3api list-buckets --query "Buckets[*].Name" --output text)
+s3BucketName=$(aws s3api list-buckets --query "Buckets[*].[Name][0]" --output text)
 
 account_id=$(aws sts get-caller-identity --query "Account" --output text)
 

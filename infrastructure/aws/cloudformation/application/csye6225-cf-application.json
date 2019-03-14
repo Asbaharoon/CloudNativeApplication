@@ -32,7 +32,10 @@
   "applicationName": {
     "Type": "String"
   },
-  "s3BucketName": {
+  "s3CodeDeploy": {
+    "Type": "String"
+  }, 
+  "s3Attachment": {
     "Type": "String"
   }
  },
@@ -158,7 +161,7 @@
                   "Fn::Sub": "echo 'JAVA_OPTS=\"$JAVA_OPTS -Dcloud.aws.region.static=us-east-1\"' >> /opt/tomcat/bin/setenv.sh"
                 },
                 {
-                  "Fn::Sub": "echo 'JAVA_OPTS=\"$JAVA_OPTS -Daws.s3.bucketname=${s3BucketName}\"' >> /opt/tomcat/bin/setenv.sh"
+                  "Fn::Sub": "echo 'JAVA_OPTS=\"$JAVA_OPTS -Daws.s3.bucketname=${s3Attachment}\"' >> /opt/tomcat/bin/setenv.sh"
                 },
                 "chmod +x /opt/tomcat/bin/setenv.sh",
                 "chown tomcat:tomcat /opt/tomcat/bin/setenv.sh",
@@ -216,7 +219,7 @@
                     [
                       "arn:aws:s3:::",
                       {
-                        "Ref": "s3BucketName"
+                        "Ref": "s3CodeDeploy"
                       }
                     ]
                   ]
@@ -227,7 +230,7 @@
                     [
                       "arn:aws:s3:::",
                       {
-                        "Ref": "s3BucketName"
+                        "Ref": "s3CodeDeploy"
                       },
                       "/*"
                     ]
