@@ -53,7 +53,7 @@ public class AwsService {
             fileUrl = endpointUrl + "/" + nameCardBucket + "/" + fileName;
             s3.putObject(new PutObjectRequest(nameCardBucket,
                     fileName, file).withCannedAcl(CannedAccessControlList.PublicRead));
-            new File(file.getPath()).delete();
+//            new File(file.getPath()).delete();
         }catch (Exception e) {
             e.printStackTrace();
         }

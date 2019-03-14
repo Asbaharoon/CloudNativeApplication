@@ -17,7 +17,7 @@ fi
 
 keyTagValue=$(aws ec2 describe-key-pairs --query "KeyPairs[*].[KeyName]" --output text)
 
-amiId=$(aws ec2 describe-images --filters "Name=tag:Name,Values=centos_assignment4" --query Images[*].ImageId --output text)
+amiId=$(aws ec2 describe-images --filters "Name=tag:Name,Values=centos_assignment4" --query Images[0].ImageId --output text)
 
 echo $amiId
 
