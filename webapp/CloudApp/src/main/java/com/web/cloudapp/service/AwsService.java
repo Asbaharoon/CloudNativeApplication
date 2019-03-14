@@ -2,10 +2,8 @@ package com.web.cloudapp.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.services.s3.model.GetObjectRequest;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.*;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -35,9 +33,6 @@ public class AwsService {
      */
     private File convertMultiPartToFile(MultipartFile file) throws IOException {
         File convFile = new File(file.getOriginalFilename());
-        FileOutputStream fos = new FileOutputStream(convFile);
-        fos.write(file.getBytes());
-        fos.close();
         return convFile;
     }
     private String generateFileName(MultipartFile multiPart) {
@@ -51,9 +46,10 @@ public class AwsService {
             String fileName = generateFileName(file1);
             endpointUrl="https://s3.amazonaws.com";
             fileUrl = endpointUrl + "/" + nameCardBucket + "/" + fileName;
+            ObjectMetadata metadata= new ObjectMetadata();
+            metadata.setContentType(FilenameUtils.getExtension(file.getPath()));
             s3.putObject(new PutObjectRequest(nameCardBucket,
-                    fileName, file).withCannedAcl(CannedAccessControlList.PublicRead));
-//            new File(file.getPath()).delete();
+                    fileName, file1.getInputStream(),metadata).withCannedAcl(CannedAccessControlList.PublicRead));
         }catch (Exception e) {
             e.printStackTrace();
         }
