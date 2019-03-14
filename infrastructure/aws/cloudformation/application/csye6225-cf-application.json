@@ -243,7 +243,39 @@
                   ]
                 }
               ]
-            }
+            },
+	    {
+	    "Action": [
+                "s3:DeleteObject",
+                "s3:Put*"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:aws:s3:::",
+                      {
+                        "Ref": "s3Attachment"
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:aws:s3:::",
+                      {
+                        "Ref": "s3Attachment"
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ]
+	    }
           ]
         },
         "Roles": [
