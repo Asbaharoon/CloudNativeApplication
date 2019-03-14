@@ -31,6 +31,10 @@ account_id=$(aws sts get-caller-identity --query "Account" --output text)
 
 region="us-east-1"
 
+s3codedeploy=$(aws s3api list-buckets --query "Buckets[*].[Name][0]" --output text)
+
+s3attachments=$(aws s3api list-buckets --query "Buckets[*].[Name][1]" --output text)
+
 applicationName="csye6225-webapp"
 
 webSecurityGroupTagValue=csye6225-webapp

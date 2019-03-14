@@ -43,7 +43,7 @@
         "AttributeDefinitions" : [
           {
             "AttributeName" : "id",
-            "AttributeType" : "S"   
+            "AttributeType" : "S"
           }
         ],
         "KeySchema" : [
@@ -58,7 +58,7 @@
         },
         "TableName" : "csye6225"
       }
-      
+
     },
   "webServerSecurityGroup" : {
    "Type" : "AWS::EC2::SecurityGroup",
@@ -85,7 +85,7 @@
       "ToPort" : 443
      }
      ],
-    "VpcId" : {"Fn::ImportValue" : "networkVpcId"} 
+    "VpcId" : {"Fn::ImportValue" : "networkVpcId"}
    }
   },
   "dbSecurityGroup" : {
@@ -101,7 +101,7 @@
        "ToPort" : 3306
       }
       ],
-     "VpcId" : {"Fn::ImportValue" : "networkVpcId"} 
+     "VpcId" : {"Fn::ImportValue" : "networkVpcId"}
     }
   },
   "CodeDeployEC2ServiceRoleInstanceProfile": {
@@ -220,6 +220,18 @@
                       }
                     ]
                   ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:aws:s3:::",
+                      {
+                        "Ref": "s3BucketName"
+                      },
+                      "/*"
+                    ]
+                  ]
                 }
               ]
             }
@@ -320,6 +332,6 @@
           ]
         }
       }
-    }  
+    }
  }
 }
