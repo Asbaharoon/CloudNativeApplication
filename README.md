@@ -85,7 +85,7 @@ AWS CodeDeploy is a fully managed deployment service that automates software dep
 ```
 curl -u TOKEN \
      -d build_parameters[CIRCLE_JOB]=build \
-     https://circleci.com/api/v1.1/project/github/tejasparikh/csye6225-spring2019-ami/tree/master
+     https://circleci.com/api/v1.1/project/github/[username]/[repository-name]/tree/master
 ```
 
 
