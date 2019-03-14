@@ -41,7 +41,7 @@ Send the Get request http://localhost:8080/ and select Basic Auth after succesfu
 * As a user, I should be able to get a note that I have created.
 
 | Endpoint | Request Type | Functionality |
-| --- | --- | --- | --- |
+| --------- | --------- | --------- |
 | /note | GET | Get all notes for a User |
 | /note | POST | Create a note for the user |
 | /note/{idNotes} | GET | Get note for the user |
@@ -58,7 +58,7 @@ Send the Get request http://localhost:8080/ and select Basic Auth after succesfu
 * Metadata about attachements attached to my note should be stored in RDBMS such as MySQL.
 
 | Endpoint | Request Type | Functionality |
-| --- | --- | --- | --- |
+| --------- | --------- | --------- |
 | /note/{idNotes}/attachments | GET | Get list of files attached to the note identified by the 'id' |
 | /note/{idNotes}/attachments | POST | Attach a file to the note identified by the 'id' |
 | /note/{idNotes}/attachments/{idAttachments} | PUT | Update file identified by 'idAttachments' attached to the note identified by the 'id' |
