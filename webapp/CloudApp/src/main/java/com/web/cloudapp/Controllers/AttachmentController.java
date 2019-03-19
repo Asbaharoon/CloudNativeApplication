@@ -19,7 +19,7 @@ public class AttachmentController {
     ResponseEntity rs = new ResponseEntity(HttpStatus.NOT_IMPLEMENTED);
 
     //Creating new Attachment for the note
-    @PostMapping("/notemegan/{id}/attachments")
+    @PostMapping("/note/{id}/attachments")
     public @ResponseBody
     ResponseEntity createAttachment(@PathVariable(value = "id") String id, @RequestParam("file") MultipartFile file){
         Attachment a =attachmentService.addAttachment(id,file);
@@ -27,14 +27,14 @@ public class AttachmentController {
     }
 
     //Get all the attachments of the note
-    @GetMapping("/notemegan/{id}/attachments")
+    @GetMapping("/note/{id}/attachments")
     public @ResponseBody ResponseEntity getAllAttachments(@PathVariable(value = "id") String id){
         List<Attachment> aL = attachmentService.getAllAttachments(id);
         return new ResponseEntity(aL,HttpStatus.OK);
     }
 
     //Update the attachment using attachment id
-    @PutMapping("/notemegan/{id}/attachments/{idAttachment}")
+    @PutMapping("/note/{id}/attachments/{idAttachment}")
     public @ResponseBody ResponseEntity updateAttachment( @PathVariable(value ="id") String noteId,@PathVariable(value ="idAttachment") String attachId,@RequestParam("file") MultipartFile file){
         boolean success = attachmentService.updateAttachment(noteId,attachId,file);
         if(success)rs= new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -42,7 +42,7 @@ public class AttachmentController {
     }
 
     //Delete an attachment
-    @DeleteMapping("/notemegan/{id}/attachments/{idAttachment}")
+    @DeleteMapping("/note/{id}/attachments/{idAttachment}")
     public @ResponseBody ResponseEntity deleteAttachment( @PathVariable(value ="id") String noteId,@PathVariable(value ="idAttachment") String attachId){
         boolean success = attachmentService.deleteAttachment(noteId,attachId);
         if(success) rs= new ResponseEntity(HttpStatus.NO_CONTENT);
