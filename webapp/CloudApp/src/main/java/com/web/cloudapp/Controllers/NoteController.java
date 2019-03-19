@@ -18,7 +18,7 @@ public class NoteController {
     ResponseEntity res =new ResponseEntity(HttpStatus.NOT_IMPLEMENTED);
 
     //Getting All Notes
-    @GetMapping("/note/vikram")
+    @GetMapping("/note/")
     public @ResponseBody
     ResponseEntity getAllNotes(){
         List<Note> out= noteService.getAllNotes();
