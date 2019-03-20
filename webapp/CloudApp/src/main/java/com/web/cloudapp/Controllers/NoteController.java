@@ -18,7 +18,7 @@ public class NoteController {
     ResponseEntity res =new ResponseEntity(HttpStatus.NOT_IMPLEMENTED);
 
     //Getting All Notes
-    @GetMapping("/note/vinyas")
+    @GetMapping("/note")
     public @ResponseBody
     ResponseEntity getAllNotes(){
         List<Note> out= noteService.getAllNotes();
@@ -26,7 +26,7 @@ public class NoteController {
     }
 
     //Get one note with NoteId
-    @GetMapping("/note/vinyas/{id}")
+    @GetMapping("/note/{id}")
     public @ResponseBody ResponseEntity getNote(@PathVariable(value = "id") String id){
         Note n = noteService.getNote(id);
         if(n!=null)res= new ResponseEntity(n,HttpStatus.OK);
@@ -34,21 +34,21 @@ public class NoteController {
     }
 
     //Creating a Note
-    @PostMapping("/note/vinyas")
+    @PostMapping("/note")
     public @ResponseBody ResponseEntity addNote(@RequestBody Note note) {
         if(noteService.createNote(note)) res= new ResponseEntity(note, HttpStatus.CREATED);
         return res;
     }
 
     //Updating the Note
-    @PutMapping("/note/vinyas/{id}")
+    @PutMapping("/note/{id}")
     public @ResponseBody ResponseEntity updateNote(@PathVariable(value = "id") String id, @RequestBody Note note) {
         if(noteService.updateNote(id,note)) res = new ResponseEntity(HttpStatus.NO_CONTENT);
         return res;
     }
 
     //Deleting the Note
-    @DeleteMapping("/note/vinyas/{id}")
+    @DeleteMapping("/note/{id}")
     public @ResponseBody ResponseEntity deleteNote(@PathVariable(value = "id")String id){
         if(noteService.deleteNote(id)) res = new ResponseEntity(HttpStatus.NO_CONTENT);
         return res;
