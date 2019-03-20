@@ -13,7 +13,7 @@ import java.util.logging.SimpleFormatter;
 @PropertySource("classpath:application.properties")
 public class LogService {
 
-    @Value("${log.file}")
+    @Value("${logging.file}")
     private String filePath;
 
     public Logger logger = Logger.getLogger("MyLog");
@@ -21,6 +21,10 @@ public class LogService {
 
     public LogService() {
         try {
+            System.out.println("Hiiiii");
+            logger.info("My first log");
+
+
             fh = new FileHandler(filePath);
             logger.addHandler(fh);
             SimpleFormatter formatter = new SimpleFormatter();

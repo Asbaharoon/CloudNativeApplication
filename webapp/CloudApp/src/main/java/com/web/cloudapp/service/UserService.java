@@ -35,6 +35,7 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         try {
+
             User user = userRepository.findById(username).get();
             if (user == null) {
                 throw new UsernameNotFoundException(username + " was not found");
@@ -109,6 +110,8 @@ public class UserService implements UserDetailsService {
     //Creating new User
     public boolean createUser(User user){
         try {
+            System.out.println("Hiiiii");
+            logService.logger.info("I am  logger");
             if (checkCredentials(user)) {
                 user.setPassword(hashpwd(user.getPassword()));
                 userRepository.save(user);
