@@ -22,7 +22,7 @@ public class LogService {
         try {
             System.out.println("Hiiiii");
             logger.info("My first log");
-            fh = new FileHandler("/Users/vinyaskaushiktr/Sem4/cloud3/logs/csye6225.log");
+            fh = new FileHandler("/opt/tomcat/logs/csye6225.log");
             logger.info("After My first log");
             logger.addHandler(fh);
             SimpleFormatter formatter = new SimpleFormatter();
