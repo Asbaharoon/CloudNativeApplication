@@ -5,6 +5,7 @@ import com.web.cloudapp.model.User;
 import com.web.cloudapp.service.LogService;
 import com.web.cloudapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +14,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @RestController
 public class LoginController {
@@ -25,7 +27,6 @@ public class LoginController {
 
     @Autowired
      private LogService logService;
-
 
     Map<String,String> out = new HashMap<>();
     ResponseEntity rs = new ResponseEntity(HttpStatus.NOT_IMPLEMENTED);
