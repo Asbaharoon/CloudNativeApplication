@@ -25,6 +25,7 @@ public class NoteService {
     @Autowired
     private LogService logService;
 
+
     //Get a Note given note Id
     public Note getNote(String id){
         try {

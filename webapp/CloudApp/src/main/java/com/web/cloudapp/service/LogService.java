@@ -10,11 +10,10 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
 @Service
-@PropertySource("classpath:application.properties")
 public class LogService {
 
     @Value("${logging.file}")
-    private String filePath;
+    public String filePath;
 
     public Logger logger = Logger.getLogger("MyLog");
     FileHandler fh;
@@ -23,9 +22,8 @@ public class LogService {
         try {
             System.out.println("Hiiiii");
             logger.info("My first log");
-
-
-            fh = new FileHandler(filePath);
+            fh = new FileHandler("/Users/vinyaskaushiktr/Sem4/cloud3/logs/csye6225.log");
+            logger.info("After My first log");
             logger.addHandler(fh);
             SimpleFormatter formatter = new SimpleFormatter();
             fh.setFormatter(formatter);
@@ -34,7 +32,7 @@ public class LogService {
             logger.info("My first log");
         }
         catch(Exception e){
-            logger.info(e.getMessage());
+            logger.info("Exception");
         }
     }
 }

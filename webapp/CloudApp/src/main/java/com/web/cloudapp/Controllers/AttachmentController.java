@@ -20,9 +20,9 @@ public class AttachmentController {
 
     @Autowired
      private StatsDClient statsDClient;
-
     @Autowired
-     private LogService logService;
+    private LogService logService;
+
 
     ResponseEntity rs = new ResponseEntity(HttpStatus.NOT_IMPLEMENTED);
 

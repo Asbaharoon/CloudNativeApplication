@@ -21,7 +21,8 @@ public class NoteController {
     private StatsDClient statsDClient;
 
     @Autowired
-     private LogService logService;
+    private LogService logService;
+
 
     ResponseEntity res =new ResponseEntity(HttpStatus.NOT_IMPLEMENTED);
 

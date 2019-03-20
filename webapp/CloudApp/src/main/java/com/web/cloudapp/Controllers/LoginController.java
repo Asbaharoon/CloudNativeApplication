@@ -23,8 +23,9 @@ public class LoginController {
     @Autowired
     private StatsDClient statsDClient;
 
+    @Autowired
+     private LogService logService;
 
-     private LogService logService = new LogService();
 
     Map<String,String> out = new HashMap<>();
     ResponseEntity rs = new ResponseEntity(HttpStatus.NOT_IMPLEMENTED);

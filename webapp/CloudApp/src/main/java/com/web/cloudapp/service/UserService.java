@@ -28,9 +28,9 @@ public class UserService implements UserDetailsService {
     private static int workload=12;
     @Autowired
     private UserRepository userRepository;
-
     @Autowired
     private LogService logService;
+
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
