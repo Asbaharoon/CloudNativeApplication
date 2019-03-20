@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 
 @RestController
 public class LoginController {
@@ -37,6 +38,7 @@ public class LoginController {
             rs = new ResponseEntity(out,HttpStatus.CREATED);
             statsDClient.incrementCounter("user.post");
             logService.logger.info("Request completed successfully with status : "+ HttpStatus.CREATED.toString());
+            logService.logger.getLogger (LoginController.class.getName()).log(Level.INFO, "hello world");
         }
         return rs;
     }
