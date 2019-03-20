@@ -23,8 +23,8 @@ public class LoginController {
     @Autowired
     private StatsDClient statsDClient;
 
-    @Autowired
-     private LogService logService;
+
+     private LogService logService = new LogService();
 
     Map<String,String> out = new HashMap<>();
     ResponseEntity rs = new ResponseEntity(HttpStatus.NOT_IMPLEMENTED);
@@ -38,7 +38,6 @@ public class LoginController {
             rs = new ResponseEntity(out,HttpStatus.CREATED);
             statsDClient.incrementCounter("user.post");
             logService.logger.info("Request completed successfully with status : "+ HttpStatus.CREATED.toString());
-            logService.logger.getLogger (LoginController.class.getName()).log(Level.INFO, "hello world");
         }
         return rs;
     }
