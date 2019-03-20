@@ -179,6 +179,9 @@
               {
                   "Fn::Sub": "echo 'JAVA_OPTS=\"$JAVA_OPTS -Dmetrics.server.port=8125\"' >> /opt/tomcat/bin/setenv.sh"
                },
+	      {
+                  "Fn::Sub": "echo 'JAVA_OPTS=\"$JAVA_OPTS -Dlogging.file=/opt/tomcat/logs/csye6225.log\"' >> /opt/tomcat/bin/setenv.sh"
+               },
                 "chmod +x /opt/tomcat/bin/setenv.sh",
                 "chown tomcat:tomcat /opt/tomcat/bin/setenv.sh",
                 "sudo service tomcat restart "

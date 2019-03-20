@@ -13,7 +13,7 @@ import java.util.logging.SimpleFormatter;
 @PropertySource("classpath:application.properties")
 public class LogService {
 
-    @Value("${logging.file}")
+    @Value("${log.file}")
     private String filePath;
 
     public Logger logger = Logger.getLogger("MyLog");
