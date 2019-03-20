@@ -285,9 +285,37 @@
         ]
       }
     },
+
+	"CloudWatchLogPolicy": {
+		"Type": "AWS::IAM::ManagedPolicy",
+		"Properties": {
+		"ManagedPolicyName": "CloudWatchPolicyName",
+		"PolicyDocument": {
+			"Version": "2012-10-17",
+			"Statement": [
+				{
+				"Effect": "Allow",
+				"Action": [
+					"logs:CreateLogGroup",
+					"logs:CreateLogStream",
+					"logs:PutLogEvents",
+					"logs:DescribeLogStreams"
+					],
+				"Resource": [
+					"arn:aws:logs:*:*:*"
+					]
+				}]
+				  }
+			}
+		},
     "CodeDeployEC2ServiceRole": {
       "Type": "AWS::IAM::Role",
       "Properties": {
+        "ManagedPolicyArns": [
+          {"Ref": "CloudWatchLogPolicy"},
+	    "arn:aws:iam::aws:policy/CloudWatchAgentAdminPolicy",
+	    "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
+          ],
         "AssumeRolePolicyDocument": {
           "Version": "2012-10-17",
           "Statement": [
