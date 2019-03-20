@@ -1,6 +1,8 @@
 package com.web.cloudapp.Controllers;
 
+import com.timgroup.statsd.StatsDClient;
 import com.web.cloudapp.model.User;
+import com.web.cloudapp.service.LogService;
 import com.web.cloudapp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,6 +19,12 @@ public class LoginController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private StatsDClient statsDClient;
+
+    @Autowired
+     private LogService logService;
+
     Map<String,String> out = new HashMap<>();
     ResponseEntity rs = new ResponseEntity(HttpStatus.NOT_IMPLEMENTED);
 
@@ -27,6 +35,8 @@ public class LoginController {
         if(userService.createUser(user)) {
             out.put("message","User Created Successfully");
             rs = new ResponseEntity(out,HttpStatus.CREATED);
+            statsDClient.incrementCounter("user.post");
+            logService.logger.info("Request completed successfully with status : "+ HttpStatus.CREATED.toString());
         }
         return rs;
     }
@@ -38,6 +48,8 @@ public class LoginController {
         out.clear();
         Date date = new Date();
         out.put("timestamp",date.toString());
+        statsDClient.incrementCounter("user.get");
+        logService.logger.info("Request completed successfully with status : "+ HttpStatus.OK.toString());
         return new ResponseEntity(out,HttpStatus.OK);
     }
 }
