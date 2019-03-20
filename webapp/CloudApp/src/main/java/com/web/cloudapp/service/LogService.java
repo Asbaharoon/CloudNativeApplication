@@ -13,16 +13,16 @@ import java.util.logging.SimpleFormatter;
 public class LogService {
 
     @Value("${logging.file}")
-    public String filePath;
+    private String filePath;
 
     public Logger logger = Logger.getLogger("MyLog");
     FileHandler fh;
 
     public LogService() {
         try {
-            System.out.println("Hiiiii");
-            logger.info("My first log");
-            fh = new FileHandler("/opt/tomcat/logs/csye6225.log");
+
+            fh = new FileHandler(filePath);
+            System.out.println(filePath);
             logger.info("After My first log");
             logger.addHandler(fh);
             SimpleFormatter formatter = new SimpleFormatter();
