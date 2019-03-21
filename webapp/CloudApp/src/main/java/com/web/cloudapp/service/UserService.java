@@ -38,7 +38,6 @@ public class UserService implements UserDetailsService {
 
             User user = userRepository.findById(username).get();
             if (user == null) {
-                logService.logger.severe(new UsernameNotFoundException(username + " was not found").toString());
                 throw new UsernameNotFoundException(username + " was not found");
 
             }
