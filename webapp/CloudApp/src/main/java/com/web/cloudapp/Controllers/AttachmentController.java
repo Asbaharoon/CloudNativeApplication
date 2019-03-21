@@ -36,7 +36,7 @@ public class AttachmentController {
             logService.logger.info("Request completed successfully with status : "+ HttpStatus.CREATED.toString());
             return new ResponseEntity(a, HttpStatus.CREATED);
         }catch (Exception ex){
-            logService.logger.severe(ex.getMessage());
+            logService.logger.warning(ex.getMessage());
             throw ex;
         }
     }
@@ -75,7 +75,7 @@ public class AttachmentController {
             logService.logger.info("Request completed successfully with status : "+HttpStatus.NO_CONTENT.toString());
             return rs;
         }catch (Exception ex){
-            logService.logger.severe(ex.getMessage());
+            logService.logger.warning(ex.getMessage());
             throw ex;
         }
     }

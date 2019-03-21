@@ -73,7 +73,7 @@ public class NoteController {
             logService.logger.info("Request completed successfully : " + HttpStatus.NO_CONTENT.toString());
             return res;
         }catch(Exception ex){
-            logService.logger.severe(ex.getMessage());
+            logService.logger.warning(ex.getMessage());
             throw ex;
         }
     }
