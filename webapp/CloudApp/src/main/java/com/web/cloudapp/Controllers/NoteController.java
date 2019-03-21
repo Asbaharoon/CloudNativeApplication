@@ -27,7 +27,7 @@ public class NoteController {
     ResponseEntity res =new ResponseEntity(HttpStatus.NOT_IMPLEMENTED);
 
     //Getting All Notes
-    @GetMapping("/note/")
+    @GetMapping("/note")
     public @ResponseBody
     ResponseEntity getAllNotes(){
         statsDClient.incrementCounter("note.getAll");
