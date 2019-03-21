@@ -20,6 +20,8 @@ public class AwsService {
 
     @Autowired
     private AmazonS3 s3 = AmazonS3ClientBuilder.defaultClient();
+    @Autowired
+    private LogService logService;
 
 
     @Value("${aws.s3.bucketname}")
@@ -35,11 +37,11 @@ public class AwsService {
         File convFile = new File(file.getOriginalFilename());
         return convFile;
     }
-    private String generateFileName(MultipartFile multiPart) {
+    private String generateFileName(MultipartFile multiPart){
         return new Date().getTime() + "-" + multiPart.getOriginalFilename().replace(" ", "_");
     }
 
-    public String uploadFile(MultipartFile file1, String filename) {
+    public String uploadFile(MultipartFile file1, String filename)  throws Exception{
         String fileUrl = "";
         try {
             File file = convertMultiPartToFile(file1);
@@ -50,17 +52,25 @@ public class AwsService {
             metadata.setContentType(FilenameUtils.getExtension(file.getPath()));
             s3.putObject(new PutObjectRequest(nameCardBucket,
                     fileName, file1.getInputStream(),metadata).withCannedAcl(CannedAccessControlList.PublicRead));
-        }catch (Exception e) {
-            e.printStackTrace();
+            logService.logger.info("File uploaded successfully");
+        }catch (Exception ex){
+            logService.logger.severe(ex.getMessage());
+            throw ex;
         }
         return fileUrl;
     }
 
     //Deleting the file from S3 bucket
     public boolean deleteFileFromS3Bucket(String fileNameToDelete) {
-        String fileName = fileNameToDelete.substring(fileNameToDelete.lastIndexOf("/") + 1);
-        s3.deleteObject(nameCardBucket,fileName);
-        return true;
+        try {
+            String fileName = fileNameToDelete.substring(fileNameToDelete.lastIndexOf("/") + 1);
+            s3.deleteObject(nameCardBucket, fileName);
+            logService.logger.info("File deleted successfully");
+            return true;
+        }catch (Exception ex){
+            logService.logger.severe(ex.getMessage());
+            throw ex;
+        }
     }
 
 

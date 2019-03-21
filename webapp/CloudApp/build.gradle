@@ -45,6 +45,8 @@ dependencies {
     compile group: 'org.json', name: 'json', version: '20180813'
     compile "com.amazonaws:aws-java-sdk-s3:1.11.422"
     compile "org.springframework.cloud:spring-cloud-starter-aws:2.0.0.RELEASE"
+    compile group: 'com.amazonaws', name: 'aws-java-sdk-cloudwatch', version: '1.11.447'
+    compile('com.timgroup:java-statsd-client:3.0.1')
 
 }
 
