@@ -10,6 +10,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.Arrays;
 import java.util.logging.FileHandler;
@@ -26,11 +27,16 @@ public class LogService {
     public Logger logger = Logger.getLogger("MyLog");
     FileHandler fh;
 
-    @Autowired
-    public LogService() {
+    public LogService(){
+        System.out.println("Constr");
+    }
+
+    @PostConstruct
+    public void init() {
         try {
-            fh = new FileHandler();
-            System.out.println();
+            System.out.println("Post COntr"+filePath);
+            fh = new FileHandler(filePath);
+            System.out.println("+"+filePath);
             logger.info("After My first log");
             logger.addHandler(fh);
             SimpleFormatter formatter = new SimpleFormatter();

@@ -35,10 +35,10 @@ public class LoginController {
     @PostMapping("/user/register")
     public @ResponseBody
     ResponseEntity register(@RequestBody User user){
+        statsDClient.incrementCounter("user.post");
         if(userService.createUser(user)) {
             out.put("message","User Created Successfully");
             rs = new ResponseEntity(out,HttpStatus.CREATED);
-            statsDClient.incrementCounter("user.post");
             logService.logger.info("Request completed successfully with status : "+ HttpStatus.CREATED.toString());
         }
         return rs;
@@ -49,9 +49,9 @@ public class LoginController {
     public @ResponseBody
     ResponseEntity getTime(){
         out.clear();
+        statsDClient.incrementCounter("user.get");
         Date date = new Date();
         out.put("timestamp",date.toString());
-        statsDClient.incrementCounter("user.get");
         logService.logger.info("Request completed successfully with status : "+ HttpStatus.OK.toString());
         return new ResponseEntity(out,HttpStatus.OK);
     }

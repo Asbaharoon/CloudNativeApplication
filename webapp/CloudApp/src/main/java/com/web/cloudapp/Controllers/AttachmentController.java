@@ -31,8 +31,8 @@ public class AttachmentController {
     public @ResponseBody
     ResponseEntity createAttachment(@PathVariable(value = "id") String id, @RequestParam("file") MultipartFile file) throws Exception{
         try {
-            Attachment a = attachmentService.addAttachment(id, file);
             statsDClient.incrementCounter("attachment.post");
+            Attachment a = attachmentService.addAttachment(id, file);
             logService.logger.info("Request completed successfully with status : "+ HttpStatus.CREATED.toString());
             return new ResponseEntity(a, HttpStatus.CREATED);
         }catch (Exception ex){
@@ -44,8 +44,8 @@ public class AttachmentController {
     //Get all the attachments of the note
     @GetMapping("/note/{id}/attachments")
     public @ResponseBody ResponseEntity getAllAttachments(@PathVariable(value = "id") String id){
-        List<Attachment> aL = attachmentService.getAllAttachments(id);
         statsDClient.incrementCounter("attachment.get");
+        List<Attachment> aL = attachmentService.getAllAttachments(id);
         logService.logger.info("Request completed successfully with status : "+HttpStatus.OK.toString());
         return new ResponseEntity(aL,HttpStatus.OK);
     }
@@ -54,9 +54,9 @@ public class AttachmentController {
     @PutMapping("/note/{id}/attachments/{idAttachment}")
     public @ResponseBody ResponseEntity updateAttachment( @PathVariable(value ="id") String noteId,@PathVariable(value ="idAttachment") String attachId,@RequestParam("file") MultipartFile file) throws Exception{
         try {
+            statsDClient.incrementCounter("attachment.put");
             boolean success = attachmentService.updateAttachment(noteId, attachId, file);
             if (success) rs = new ResponseEntity(HttpStatus.NO_CONTENT);
-            statsDClient.incrementCounter("attachment.put");
             logService.logger.info("Request completed successfully : "+ HttpStatus.NO_CONTENT.toString());
             return rs;
         }catch (Exception ex){
@@ -69,9 +69,9 @@ public class AttachmentController {
     @DeleteMapping("/note/{id}/attachments/{idAttachment}")
     public @ResponseBody ResponseEntity deleteAttachment( @PathVariable(value ="id") String noteId,@PathVariable(value ="idAttachment") String attachId) throws Exception{
         try {
+            statsDClient.incrementCounter("attachment.delete");
             boolean success = attachmentService.deleteAttachment(noteId, attachId);
             if (success) rs = new ResponseEntity(HttpStatus.NO_CONTENT);
-            statsDClient.incrementCounter("attachment.delete");
             logService.logger.info("Request completed successfully with status : "+HttpStatus.NO_CONTENT.toString());
             return rs;
         }catch (Exception ex){
