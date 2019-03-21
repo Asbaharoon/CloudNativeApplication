@@ -39,59 +39,83 @@ public class AttachmentService {
     @Autowired
     private NoteRepository noteRepository;
 
+    @Autowired
+    private LogService logService;
+
     //Get All Attachments of a Note
     public List<Attachment> getAllAttachments(String noteId){
-        Note n = noteService.getNote(noteId);
-        return n.getAttachments();
+        try {
+            Note n = noteService.getNote(noteId);
+            return n.getAttachments();
+        }catch (Exception ex){
+            logService.logger.severe(ex.getMessage());
+            throw ex;
+        }
+
     }
 
     //Create a new Attachment
-    public Attachment addAttachment(String noteId, MultipartFile attachment) {
+    public Attachment addAttachment(String noteId, MultipartFile attachment)throws Exception {
+        try {
             Note n = noteService.getNote(noteId);
             Attachment a = new Attachment();
             List<Attachment> attachments = n.getAttachments();
-            a= addFileToPath(a,attachment);
+            a = addFileToPath(a, attachment);
             attachments.add(a);
             n.setAttachments(attachments);
             noteRepository.save(n);
+            logService.logger.info("Attachment created succesfully");
             return a;
+        }catch (Exception ex){
+            logService.logger.severe(ex.getMessage());
+            throw ex;
+        }
     }
 
     //Updating an Attachment
-    public boolean updateAttachment(String noteId, String attachmentId, MultipartFile attachment) throws RuntimeException{
-
+    public boolean updateAttachment(String noteId, String attachmentId, MultipartFile attachment) throws Exception{
+        try {
             Attachment a = attachmentRepo.findById(attachmentId).orElseThrow(() -> new ResourceNotFound("attachment", "Id", attachmentId));
             Note n = noteService.getNote(noteId);
             List<Attachment> attachments = n.getAttachments();
-                if(deleteFile(a)) {
-                    attachments.remove(a);
-                    attachmentRepo.delete(a);
-                    a = addFileToPath(a, attachment);
-                    attachments.add(a);
-                    n.setAttachments(attachments);
-                    noteRepository.save(n);
-                    return true;
-                }
-                else return false;
+            if (deleteFile(a)) {
+                attachments.remove(a);
+                attachmentRepo.delete(a);
+                a = addFileToPath(a, attachment);
+                attachments.add(a);
+                n.setAttachments(attachments);
+                noteRepository.save(n);
+                logService.logger.info("Attachment updated successfully");
+                return true;
+            } else return false;
+        }catch (Exception ex){
+            logService.logger.severe(ex.getMessage());
+            throw ex;
+        }
     }
 
     //Deleting an Attachment
-    public boolean deleteAttachment(String noteId, String attachmentId) throws RuntimeException{
-        Attachment a =attachmentRepo.findById(attachmentId).orElseThrow(() -> new BadRequest("Attachment doesn't exists"));
-        Note n = noteService.getNote(noteId);
+    public boolean deleteAttachment(String noteId, String attachmentId) throws Exception{
+        try {
+            Attachment a = attachmentRepo.findById(attachmentId).orElseThrow(() -> new BadRequest("Attachment doesn't exists"));
+            Note n = noteService.getNote(noteId);
             List<Attachment> attachments = n.getAttachments();
-            if(deleteFile(a)) {
+            if (deleteFile(a)) {
                 attachments.remove(a);
                 attachmentRepo.delete(a);
                 n.setAttachments(attachments);
                 noteRepository.save(n);
+                logService.logger.info("Attachment deleted successfully");
                 return true;
-            }
-            else return false;
+            } else return false;
+        }catch (Exception ex){
+            logService.logger.severe(ex.getMessage());
+            throw ex;
+        }
     }
 
     //Moving the File to local folder or Amazon aws S3
-    public Attachment addFileToPath(Attachment a, MultipartFile file) {
+    public Attachment addFileToPath(Attachment a, MultipartFile file) throws Exception{
         String attatchmentUrl=null;
         String attachType=null;
         try {
@@ -112,14 +136,16 @@ public class AttachmentService {
             attachType = attatchmentUrl.substring(attatchmentUrl.indexOf('.') + 1);
             a.setAtt_type(attachType);
             a.setSize(file.getSize());
+            logService.logger.info("File added to the path: "+a.getUrl());
             return a;
-        }catch (IOException ex){
-            ex.printStackTrace();
+        }catch (Exception ex){
+            logService.logger.severe(ex.getMessage());
+            throw ex;
         }
-    return a;}
+    }
 
     //Deleting the file from Local folder or Amazon aws S3
-    public boolean deleteFile(Attachment a){
+    public boolean deleteFile(Attachment a) throws Exception{
         if (Arrays.asList(env.getActiveProfiles()).contains("dev")){
             return awsService.deleteFileFromS3Bucket(a.getUrl().split("/")[4]);
         }
@@ -129,9 +155,11 @@ public class AttachmentService {
                 String path = url.getPath();
                 File file = new File(path);
                 file.delete();
+                logService.logger.info("File deleted from the path");
                 return true;
-            } catch (Exception ex) {
-                return false;
+            } catch (Exception ex){
+                logService.logger.severe(ex.getMessage());
+                throw ex;
             }
         }
     }
