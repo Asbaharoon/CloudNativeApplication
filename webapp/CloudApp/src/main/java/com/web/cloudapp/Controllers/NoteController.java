@@ -21,7 +21,8 @@ public class NoteController {
     private StatsDClient statsDClient;
 
     @Autowired
-     private LogService logService;
+    private LogService logService;
+
 
     ResponseEntity res =new ResponseEntity(HttpStatus.NOT_IMPLEMENTED);
 
@@ -29,8 +30,8 @@ public class NoteController {
     @GetMapping("/note")
     public @ResponseBody
     ResponseEntity getAllNotes(){
-        List<Note> out= noteService.getAllNotes();
         statsDClient.incrementCounter("note.getAll");
+        List<Note> out= noteService.getAllNotes();
         logService.logger.info("Request completed successfully : "+ HttpStatus.OK.toString());
         return new ResponseEntity(out, HttpStatus.OK);
     }
@@ -38,9 +39,9 @@ public class NoteController {
     //Get one note with NoteId
     @GetMapping("/note/{id}")
     public @ResponseBody ResponseEntity getNote(@PathVariable(value = "id") String id){
+        statsDClient.incrementCounter("note.get");
         Note n = noteService.getNote(id);
         if(n!=null)res= new ResponseEntity(n,HttpStatus.OK);
-        statsDClient.incrementCounter("note.get");
         logService.logger.info("Request completed successfully : "+ HttpStatus.OK.toString());
      return res;
     }
@@ -48,8 +49,8 @@ public class NoteController {
     //Creating a Note
     @PostMapping("/note")
     public @ResponseBody ResponseEntity addNote(@RequestBody Note note) {
-        if(noteService.createNote(note)) res= new ResponseEntity(note, HttpStatus.CREATED);
         statsDClient.incrementCounter("note.post");
+        if(noteService.createNote(note)) res= new ResponseEntity(note, HttpStatus.CREATED);
         logService.logger.info("Request completed successfully : "+ HttpStatus.CREATED.toString());
         return res;
     }
@@ -57,8 +58,8 @@ public class NoteController {
     //Updating the Note
     @PutMapping("/note/{id}")
     public @ResponseBody ResponseEntity updateNote(@PathVariable(value = "id") String id, @RequestBody Note note) {
-        if(noteService.updateNote(id,note)) res = new ResponseEntity(HttpStatus.NO_CONTENT);
         statsDClient.incrementCounter("note.put");
+        if(noteService.updateNote(id,note)) res = new ResponseEntity(HttpStatus.NO_CONTENT);
         logService.logger.info("Request completed successfully : "+ HttpStatus.NO_CONTENT.toString());
         return res;
     }
@@ -67,8 +68,8 @@ public class NoteController {
     @DeleteMapping("/note/{id}")
     public @ResponseBody ResponseEntity deleteNote(@PathVariable(value = "id")String id) throws Exception{
         try {
-            if (noteService.deleteNote(id)) res = new ResponseEntity(HttpStatus.NO_CONTENT);
             statsDClient.incrementCounter("note.delete");
+            if (noteService.deleteNote(id)) res = new ResponseEntity(HttpStatus.NO_CONTENT);
             logService.logger.info("Request completed successfully : " + HttpStatus.NO_CONTENT.toString());
             return res;
         }catch(Exception ex){
