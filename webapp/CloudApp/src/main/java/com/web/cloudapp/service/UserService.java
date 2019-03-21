@@ -88,7 +88,7 @@ public class UserService implements UserDetailsService {
                 } else throw new BadRequest("Please enter valid email id");
             }
         }catch (Exception ex){
-            logService.logger.severe(ex.getMessage());
+            logService.logger.warning(ex.getMessage());
             throw ex;
         }
     }
@@ -103,7 +103,7 @@ public class UserService implements UserDetailsService {
             }
             return null;
         }catch (Exception ex){
-            logService.logger.severe(ex.getMessage());
+            logService.logger.warning(ex.getMessage());
             throw ex;
         }
     }
@@ -121,7 +121,7 @@ public class UserService implements UserDetailsService {
             }
             return false;
         }catch (Exception ex){
-            logService.logger.severe(ex.getMessage());
+            logService.logger.warning(ex.getMessage());
             throw ex;
         }
     }
