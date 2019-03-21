@@ -35,7 +35,7 @@ public class NoteService {
             if (checkNote(n, user)) return n;
             else return null;
         }catch (Exception ex){
-            logService.logger.severe(ex.getMessage());
+            logService.logger.warning(ex.getMessage());
             throw ex;
         }
     }
@@ -53,7 +53,7 @@ public class NoteService {
             }
             return false;
         }catch (Exception ex){
-            logService.logger.severe(ex.getMessage());
+            logService.logger.warning(ex.getMessage());
             throw ex;
         }
     }
@@ -70,7 +70,7 @@ public class NoteService {
             }
             return false;
         }catch (Exception ex){
-            logService.logger.severe(ex.getMessage());
+            logService.logger.warning(ex.getMessage());
             throw ex;
         }
     }
@@ -102,7 +102,7 @@ public class NoteService {
             }
             return false;
         }catch (Exception ex){
-            logService.logger.severe(ex.getMessage());
+            logService.logger.warning(ex.getMessage());
             throw ex;
         }
     }
@@ -119,7 +119,7 @@ public class NoteService {
         if (!n.getUserData().equals(user)) throw new Unauthorized("note", "access");
         else return true;
     }catch (Exception ex){
-        logService.logger.severe(ex.getMessage());
+        logService.logger.warning(ex.getMessage());
         throw ex;
     }
     }
@@ -130,7 +130,7 @@ public class NoteService {
         if (n.getTitle() == null || n.getTitle().equals("")) throw new EmptyField("title");
         else return true;
     }catch (Exception ex){
-        logService.logger.severe(ex.getMessage());
+        logService.logger.warning(ex.getMessage());
         throw ex;
     }
     }
