@@ -13,12 +13,6 @@
   },
     "s3BucketName":{
     "Type" : "String"
-  },
-  "s3Lamba": {
-    "Type": "String"
-  },
-  "domainName":{
-    "Type": "String"
   }
 },
  "Resources" : {
@@ -133,34 +127,6 @@
       "Users": ["circleci"]
     }
     
-  },
-  "LambdaExecutionRole": {
-    "Type": "AWS::IAM::Role",
-    "Properties": {
-      "AssumeRolePolicyDocument": {
-        "Version": "2012-10-17",
-        "Statement": [{
-          "Effect": "Allow",
-          "Principal": {"Service": ["lambda.amazonaws.com"]},
-          "Action": ["sts:AssumeRole"]
-              }]
-        },
-      "Path": "/",
-      "ManagedPolicyArns": [
-        "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-        "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess",
-        "arn:aws:iam::aws:policy/AmazonSESFullAccess",
-        "arn:aws:iam::aws:policy/service-role/AWSLambdaDynamoDBExecutionRole"
-          ],
-      "RoleName": "LambdaExecutionRole"
-      }
-    }
-  },
-  "Outputs": {
-    "lambdaexecutionrole" : {
-      "Description" : "The Lambda Execution Role",
-      "Value" : {"Ref" : "LambdaExecutionRole"},
-      "Export" : {"Name" : "csye6225-cicd-LambdaExecutionRole"}
-      }
+  }
   }
 }
