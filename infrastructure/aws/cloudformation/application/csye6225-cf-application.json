@@ -37,6 +37,15 @@
   }, 
   "s3Attachment": {
     "Type": "String"
+  },
+  "s3Lamba": {
+    "Type": "String"
+  },
+  "lambaexecRole":{
+    "Type" : "String"
+  },
+  "domainName":{
+    "Type": "String"
   }
  },
  "Resources" : {
@@ -411,6 +420,7 @@
           ]
         }
       }
-    }
+    } 
+ 
  }
 }
