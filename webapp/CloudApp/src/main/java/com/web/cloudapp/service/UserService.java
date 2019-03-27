@@ -42,8 +42,7 @@ public class UserService implements UserDetailsService {
 
     @Value("${aws.account.id}")
     private String accId;
-
-
+  
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         try {
@@ -121,6 +120,7 @@ public class UserService implements UserDetailsService {
     }
 
     //Creating new User
+
     public boolean createUser(User user) {
         try {
             System.out.println("Hiiiii");
