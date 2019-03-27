@@ -5,6 +5,10 @@ stack_name=$1
 topicName=$2
 domain=$(aws route53 list-hosted-zones --query "HostedZones[*].[Name]" --output text)
 
+domain=${domain%?}
+
+echo $domain
+
 echo $stack_name
 
 export account_id=$(aws sts get-caller-identity --query "Account" --output text)
