@@ -28,20 +28,30 @@ public class UserService implements UserDetailsService {
     private static int workload=12;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private LogService logService;
+
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findById(username).get();
-        if (user == null){
-            throw new UsernameNotFoundException(username + " was not found");
+        try {
+
+            User user = userRepository.findById(username).get();
+            if (user == null) {
+                throw new UsernameNotFoundException(username + " was not found");
+
+            }
+            List<GrantedAuthority> authorities = new ArrayList<>();
+            authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+            return new org.springframework.security.core.userdetails.User(
+                    user.getUserName(),
+                    user.getPassword(),
+                    authorities
+            );
+        }catch (Exception ex){
+            logService.logger.severe(ex.getMessage());
+            throw ex;
         }
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
-        return new org.springframework.security.core.userdetails.User(
-                user.getUserName(),
-                user.getPassword(),
-                authorities
-        );
     }
 
     //Password Hashing
@@ -54,49 +64,66 @@ public class UserService implements UserDetailsService {
     //Check for credentials
     public boolean checkCredentials(User user) throws RuntimeException{
         String username = user.getUserName(),password=user.getPassword();
-
-        //Check for username
-        if(username==null||username.equals("")) throw new BadRequest("User name cannot be empty");
-        else {
-            String ePattern = "^\\w+[\\w-\\.]*\\@\\w+((-\\w+)|(\\w*))\\.[a-z]{2,3}$";
-            Pattern p = Pattern.compile(ePattern);
-            Matcher m = p.matcher(username);
-            if (m.matches()){
-                //check for password
-                if (password == null || password.equals("")) throw new BadRequest("Password cannot be empty");
-                else {
-                    ePattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&#_^])[A-Za-z\\d@$!%*?&#_^]{8,}$";
-                    p = Pattern.compile(ePattern);
-                    m = p.matcher(password);
-                    if (m.matches()){
-                        //checking whether the user already exists
-                        if(userRepository.existsById(username)) throw new Conflict("User already present");
-                        else return true;
+        try {
+            //Check for username
+            if (username == null || username.equals("")) throw new BadRequest("User name cannot be empty");
+            else {
+                String ePattern = "^\\w+[\\w-\\.]*\\@\\w+((-\\w+)|(\\w*))\\.[a-z]{2,3}$";
+                Pattern p = Pattern.compile(ePattern);
+                Matcher m = p.matcher(username);
+                if (m.matches()) {
+                    //check for password
+                    if (password == null || password.equals("")) throw new BadRequest("Password cannot be empty");
+                    else {
+                        ePattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&#_^])[A-Za-z\\d@$!%*?&#_^]{8,}$";
+                        p = Pattern.compile(ePattern);
+                        m = p.matcher(password);
+                        if (m.matches()) {
+                            //checking whether the user already exists
+                            if (userRepository.existsById(username)) throw new Conflict("User already present");
+                            else return true;
+                        } else
+                            throw new BadRequest("Password must contain atleast 1 Upper case, 1 Lower case, 1 Alphanumeric, 1 digit with minimum of 8 characters");
                     }
-                    else throw new BadRequest("Password must contain atleast 1 Upper case, 1 Lower case, 1 Alphanumeric, 1 digit with minimum of 8 characters");
-                }
+                } else throw new BadRequest("Please enter valid email id");
             }
-            else throw new BadRequest("Please enter valid email id");
+        }catch (Exception ex){
+            logService.logger.warning(ex.getMessage());
+            throw ex;
         }
     }
 
 
     //Getting the current user
-    public User getUserName(){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (!(authentication instanceof AnonymousAuthenticationToken)) {
-            return userRepository.findById(authentication.getName()).get();
+    public User getUserName() {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (!(authentication instanceof AnonymousAuthenticationToken)) {
+                return userRepository.findById(authentication.getName()).get();
+            }
+            return null;
+        }catch (Exception ex){
+            logService.logger.warning(ex.getMessage());
+            throw ex;
         }
-        return null;}
+    }
 
     //Creating new User
     public boolean createUser(User user){
-        if(checkCredentials(user)){
-            user.setPassword(hashpwd(user.getPassword()));
-            userRepository.save(user);
-            return true;
+        try {
+            System.out.println("Hiiiii");
+            logService.logger.info("I am  logger");
+            if (checkCredentials(user)) {
+                user.setPassword(hashpwd(user.getPassword()));
+                userRepository.save(user);
+                logService.logger.info("User created successfully");
+                return true;
+            }
+            return false;
+        }catch (Exception ex){
+            logService.logger.warning(ex.getMessage());
+            throw ex;
         }
-        return false;
     }
 
     public boolean checkPasswordTest(String password){
