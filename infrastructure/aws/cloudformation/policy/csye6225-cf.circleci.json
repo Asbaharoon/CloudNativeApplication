@@ -14,11 +14,8 @@
     "s3BucketName":{
     "Type" : "String"
   },
-  "s3Lamba": {
-    "Type": "String"
-  },
-  "domainName":{
-    "Type": "String"
+  "s3lambda": {
+    "Type":"String"
   }
 },
  "Resources" : {
@@ -85,7 +82,9 @@
                 ],
                 "Resource": [
                   {"Fn::Join": [ "", ["arn:aws:s3:::", { "Ref": "s3BucketName"}]]},
-                  {"Fn::Join": [ "", ["arn:aws:s3:::", { "Ref": "s3BucketName"},"/*"]]}
+                  {"Fn::Join": [ "", ["arn:aws:s3:::", { "Ref": "s3BucketName"},"/*"]]},
+                  {"Fn::Join": [ "", ["arn:aws:s3:::", { "Ref": "s3lambda"}]]},
+                  {"Fn::Join": [ "", ["arn:aws:s3:::", { "Ref": "s3lambda"},"/*"]]}
                ]
             }
         ]
@@ -147,7 +146,7 @@
         },
       "Path": "/",
       "ManagedPolicyArns": [
-        "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+        "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRolearn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
         "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess",
         "arn:aws:iam::aws:policy/AmazonSESFullAccess",
         "arn:aws:iam::aws:policy/service-role/AWSLambdaDynamoDBExecutionRole"
