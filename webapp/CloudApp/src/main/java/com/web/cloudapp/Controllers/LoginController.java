@@ -55,4 +55,16 @@ public class LoginController {
         logService.logger.info("Request completed successfully with status : "+ HttpStatus.OK.toString());
         return new ResponseEntity(out,HttpStatus.OK);
     }
+    //Password Reset
+    @PostMapping("/reset")
+    public @ResponseBody
+    ResponseEntity resetPassword(@RequestBody String jsonEmail){
+        out.clear();
+        statsDClient.increment("password.reset.post");
+        if(userService.resetpassword(jsonEmail)) {
+            out.put("message: ", "Request raised successfully please check your email");
+            logService.logger.info("SNS request created successfully with status : "+ HttpStatus.CREATED.toString());
+            rs = new ResponseEntity(out,HttpStatus.CREATED);
+        }
+        return rs;}
 }

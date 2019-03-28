@@ -1,11 +1,16 @@
 package com.web.cloudapp.service;
 
-
+import com.amazonaws.services.sns.AmazonSNS;
+import com.amazonaws.services.sns.AmazonSNSClient;
+import com.amazonaws.services.sns.model.PublishRequest;
+import com.amazonaws.services.sns.model.PublishResult;
 import com.web.cloudapp.Exception.BadRequest;
 import com.web.cloudapp.Exception.Conflict;
+import com.web.cloudapp.Exception.ResourceNotFound;
 import com.web.cloudapp.Repository.UserRepository;
 import com.web.cloudapp.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -21,7 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.springframework.beans.factory.annotation.Value;
 @Service
 public class UserService implements UserDetailsService {
 
@@ -142,5 +146,33 @@ public class UserService implements UserDetailsService {
             Matcher m = p.matcher(password);
             return m.matches();
         }
+    }
+    //Password reset username check
+    public boolean checkUserName(String username) {
+        try {
+            if (username == null || username.equals("")) throw new BadRequest("User name cannot be empty");
+            else {
+                String ePattern = "^\\w+[\\w-\\.]*\\@\\w+((-\\w+)|(\\w*))\\.[a-z]{2,3}$";
+                Pattern p = Pattern.compile(ePattern);
+                Matcher m = p.matcher(username);
+                if (m.matches()) {
+                    if (userRepository.existsById(username)) return true;
+                    else throw new BadRequest("Not a valid user");
+                } else throw new BadRequest("Please enter valid email id");
+            }
+        } catch (Exception ex) {
+            logService.logger.warning(ex.getMessage());
+            throw ex;
+        }
+    }
+
+    public boolean resetpassword(String jsonUsername){
+        String username = jsonUsername.split(":")[1].split("\\\"")[1];
+        checkUserName(username);
+        AmazonSNS snsClient = AmazonSNSClient.builder().defaultClient();
+        PublishRequest emailPublishRequest = new PublishRequest("arn:aws:sns:us-east-1:" + accId + ":" + topicName, username);
+        PublishResult emailPublishResult = snsClient.publish(emailPublishRequest);
+        snsClient.shutdown();
+        return true;
     }
 }
