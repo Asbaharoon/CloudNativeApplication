@@ -181,8 +181,10 @@
                 },
                 {
                   "Fn::Sub": "echo 'JAVA_OPTS=\"$JAVA_OPTS -Daws.s3.bucketname=${s3Attachment}\"' >> /opt/tomcat/bin/setenv.sh"
-                }
-                ,
+                },
+                {
+                      "Fn::Sub": "echo 'JAVA_OPTS=\"$JAVA_OPTS -Daws.account.id=${accountID}\"' >> /opt/tomcat/bin/setenv.sh"
+                },
                {
                   "Fn::Sub": "echo 'JAVA_OPTS=\"$JAVA_OPTS -Dpublish.metrics=true\"' >> /opt/tomcat/bin/setenv.sh"
                },
