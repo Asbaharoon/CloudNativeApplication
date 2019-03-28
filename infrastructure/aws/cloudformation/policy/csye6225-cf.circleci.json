@@ -13,6 +13,9 @@
   },
     "s3BucketName":{
     "Type" : "String"
+  },
+  "s3lambda": {
+    "Type":"String"
   }
 },
  "Resources" : {
@@ -79,14 +82,16 @@
                 ],
                 "Resource": [
                   {"Fn::Join": [ "", ["arn:aws:s3:::", { "Ref": "s3BucketName"}]]},
-                  {"Fn::Join": [ "", ["arn:aws:s3:::", { "Ref": "s3BucketName"},"/*"]]}
+                  {"Fn::Join": [ "", ["arn:aws:s3:::", { "Ref": "s3BucketName"},"/*"]]},
+                  {"Fn::Join": [ "", ["arn:aws:s3:::", { "Ref": "s3lambda"}]]},
+                  {"Fn::Join": [ "", ["arn:aws:s3:::", { "Ref": "s3lambda"},"/*"]]}
                ]
             }
         ]
     },
     "Users": ["circleci"]
     }
-    
+
   },
   "CirlceCICodeDeploy":{
     "Type":"AWS::IAM::Policy",
@@ -126,7 +131,55 @@
       ]},
       "Users": ["circleci"]
     }
-    
+
+  },
+  "LambdaExecutionRole": {
+    "Type": "AWS::IAM::Role",
+    "Properties": {
+      "AssumeRolePolicyDocument": {
+        "Version": "2012-10-17",
+        "Statement": [{
+          "Effect": "Allow",
+          "Principal": {"Service": ["lambda.amazonaws.com"]},
+          "Action": ["sts:AssumeRole"]
+              }]
+        },
+      "Path": "/",
+      "ManagedPolicyArns": [
+        "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+        "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess",
+        "arn:aws:iam::aws:policy/AmazonSESFullAccess",
+        "arn:aws:iam::aws:policy/service-role/AWSLambdaDynamoDBExecutionRole"
+          ],
+      "RoleName": "LambdaExecutionRole"
+      }
+    },
+    "LambdaPolicy":{
+      "Type":"AWS::IAM::Policy",
+      "Properties":{
+      "PolicyName": "Lambda-Policy",
+      "PolicyDocument":{
+        "Version": "2012-10-17",
+        "Statement": [
+         {
+             "Action": [
+                 "lambda:*"
+             ],
+             "Resource": [
+                 "*"
+             ],
+             "Effect": "Allow"
+         }
+     ]},
+    "Users": ["circleci"]
+    }
   }
+},
+  "Outputs": {
+    "lambdaexecutionrole" : {
+      "Description" : "The Lambda Execution Role",
+      "Value" : {"Ref" : "LambdaExecutionRole"},
+      "Export" : {"Name" : "csye6225-cicd-LambdaExecutionRole"}
+      }
   }
 }

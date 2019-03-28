@@ -21,6 +21,7 @@
           <element id="library" level="project" name="Gradle: org.springframework.data:spring-data-jpa:2.1.4.RELEASE" />
           <element id="library" level="project" name="Gradle: org.hibernate:hibernate-core:5.2.14.Final" />
           <element id="library" level="project" name="Gradle: org.json:json:20180813" />
+<<<<<<< HEAD
           <element id="library" level="project" name="Gradle: org.springframework.cloud:spring-cloud-starter-aws:2.0.0.RELEASE" />
           <element id="library" level="project" name="Gradle: org.springframework.cloud:spring-cloud-aws-autoconfigure:2.0.0.RELEASE" />
           <element id="library" level="project" name="Gradle: org.springframework.cloud:spring-cloud-aws-context:2.0.0.RELEASE" />
@@ -28,6 +29,8 @@
           <element id="library" level="project" name="Gradle: com.amazonaws:aws-java-sdk-s3:1.11.422" />
           <element id="library" level="project" name="Gradle: com.amazonaws:aws-java-sdk-cloudwatch:1.11.447" />
           <element id="library" level="project" name="Gradle: com.timgroup:java-statsd-client:3.0.1" />
+=======
+>>>>>>> 047dff5bee8acf48968c9813bd249072ebba0806
           <element id="library" level="project" name="Gradle: org.springframework.boot:spring-boot-starter-security:2.1.2.RELEASE" />
           <element id="library" level="project" name="Gradle: org.springframework.boot:spring-boot-starter-web-services:2.1.2.RELEASE" />
           <element id="library" level="project" name="Gradle: org.springframework.boot:spring-boot-starter-web:2.1.2.RELEASE" />
@@ -76,32 +79,45 @@
           <element id="library" level="project" name="Gradle: org.jboss:jandex:2.0.3.Final" />
           <element id="library" level="project" name="Gradle: com.fasterxml:classmate:1.4.0" />
           <element id="library" level="project" name="Gradle: dom4j:dom4j:1.6.1" />
+<<<<<<< HEAD
           <element id="library" level="project" name="Gradle: com.amazonaws:aws-java-sdk-kms:1.11.422" />
           <element id="library" level="project" name="Gradle: com.amazonaws:aws-java-sdk-ec2:1.11.336" />
           <element id="library" level="project" name="Gradle: com.amazonaws:aws-java-sdk-cloudformation:1.11.336" />
           <element id="library" level="project" name="Gradle: com.amazonaws:aws-java-sdk-core:1.11.447" />
           <element id="library" level="project" name="Gradle: com.amazonaws:jmespath-java:1.11.447" />
+=======
+>>>>>>> 047dff5bee8acf48968c9813bd249072ebba0806
           <element id="library" level="project" name="Gradle: com.sun.xml.messaging.saaj:saaj-impl:1.5.0" />
           <element id="library" level="project" name="Gradle: org.aspectj:aspectjweaver:1.9.2" />
           <element id="library" level="project" name="Gradle: javax.activation:javax.activation-api:1.2.0" />
           <element id="library" level="project" name="Gradle: org.springframework:spring-jcl:5.1.4.RELEASE" />
+<<<<<<< HEAD
           <element id="library" level="project" name="Gradle: org.apache.httpcomponents:httpclient:4.5.6" />
           <element id="library" level="project" name="Gradle: commons-logging:commons-logging:1.2" />
           <element id="library" level="project" name="Gradle: software.amazon.ion:ion-java:1.0.2" />
+=======
+          <element id="library" level="project" name="Gradle: org.yaml:snakeyaml:1.23" />
+>>>>>>> 047dff5bee8acf48968c9813bd249072ebba0806
           <element id="library" level="project" name="Gradle: com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.9.8" />
           <element id="library" level="project" name="Gradle: com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.8" />
           <element id="library" level="project" name="Gradle: com.fasterxml.jackson.module:jackson-module-parameter-names:2.9.8" />
           <element id="library" level="project" name="Gradle: com.fasterxml.jackson.core:jackson-databind:2.9.8" />
+<<<<<<< HEAD
           <element id="library" level="project" name="Gradle: com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:2.9.8" />
           <element id="library" level="project" name="Gradle: joda-time:joda-time:2.10.1" />
           <element id="library" level="project" name="Gradle: org.yaml:snakeyaml:1.23" />
+=======
+>>>>>>> 047dff5bee8acf48968c9813bd249072ebba0806
           <element id="library" level="project" name="Gradle: javax.validation:validation-api:2.0.1.Final" />
           <element id="library" level="project" name="Gradle: javax.xml.soap:javax.xml.soap-api:1.4.0" />
           <element id="library" level="project" name="Gradle: org.jvnet.mimepull:mimepull:1.9.10" />
           <element id="library" level="project" name="Gradle: org.jvnet.staxex:stax-ex:1.8" />
           <element id="library" level="project" name="Gradle: commons-io:commons-io:2.5" />
+<<<<<<< HEAD
           <element id="library" level="project" name="Gradle: org.apache.httpcomponents:httpcore:4.4.10" />
           <element id="library" level="project" name="Gradle: commons-codec:commons-codec:1.11" />
+=======
+>>>>>>> 047dff5bee8acf48968c9813bd249072ebba0806
           <element id="library" level="project" name="Gradle: com.fasterxml.jackson.core:jackson-annotations:2.9.0" />
           <element id="library" level="project" name="Gradle: com.fasterxml.jackson.core:jackson-core:2.9.8" />
           <element id="library" level="project" name="Gradle: ch.qos.logback:logback-core:1.2.3" />
