@@ -91,7 +91,7 @@
     },
     "Users": ["circleci"]
     }
-    
+
   },
   "CirlceCICodeDeploy":{
     "Type":"AWS::IAM::Policy",
@@ -131,7 +131,7 @@
       ]},
       "Users": ["circleci"]
     }
-    
+
   },
   "LambdaExecutionRole": {
     "Type": "AWS::IAM::Role",
@@ -153,8 +153,28 @@
           ],
       "RoleName": "LambdaExecutionRole"
       }
+    },
+    "LambdaPolicy":{
+      "Type":"AWS::IAM::Policy",
+      "Properties":{
+      "PolicyName": "Lambda-Policy",
+      "PolicyDocument":{
+        "Version": "2012-10-17",
+        "Statement": [
+         {
+             "Action": [
+                 "lambda:*"
+             ],
+             "Resource": [
+                 "*"
+             ],
+             "Effect": "Allow"
+         }
+     ]},
+    "Users": ["circleci"]
     }
-  },
+  }
+},
   "Outputs": {
     "lambdaexecutionrole" : {
       "Description" : "The Lambda Execution Role",
