@@ -30,17 +30,12 @@ public class UserService implements UserDetailsService {
     private UserRepository userRepository;
     @Autowired
     private LogService logService;
-
-<<<<<<< HEAD
+    
     @Value("${aws.topic.name}")
     private String topicName;
 
     @Value("${aws.account.id}")
     private String accId;
-  
-=======
-
->>>>>>> origin
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         try {
@@ -118,12 +113,10 @@ public class UserService implements UserDetailsService {
     }
 
     //Creating new User
-<<<<<<< HEAD
+
 
     public boolean createUser(User user) {
-=======
-    public boolean createUser(User user){
->>>>>>> origin
+
         try {
             System.out.println("Hiiiii");
             logService.logger.info("I am  logger");
