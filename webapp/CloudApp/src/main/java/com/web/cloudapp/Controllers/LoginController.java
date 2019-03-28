@@ -43,6 +43,7 @@ public class LoginController {
             logService.logger.info("Request completed successfully with status : "+ HttpStatus.CREATED.toString());
         }
         return rs;
+
     }
 
     //User authentication
