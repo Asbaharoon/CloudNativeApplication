@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
+import org.springframework.beans.factory.annotation.Value;
 @Service
 public class UserService implements UserDetailsService {
 
@@ -30,8 +30,12 @@ public class UserService implements UserDetailsService {
     private UserRepository userRepository;
     @Autowired
     private LogService logService;
+    
+    @Value("${aws.topic.name}")
+    private String topicName;
 
-
+    @Value("${aws.account.id}")
+    private String accId;
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         try {
@@ -109,7 +113,10 @@ public class UserService implements UserDetailsService {
     }
 
     //Creating new User
-    public boolean createUser(User user){
+
+
+    public boolean createUser(User user) {
+
         try {
             System.out.println("Hiiiii");
             logService.logger.info("I am  logger");
