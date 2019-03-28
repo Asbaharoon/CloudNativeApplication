@@ -35,6 +35,7 @@ public class LoginController {
     @PostMapping("/user/register")
     public @ResponseBody
     ResponseEntity register(@RequestBody User user){
+        out.clear();
         statsDClient.incrementCounter("user.post");
         if(userService.createUser(user)) {
             out.put("message","User Created Successfully");
