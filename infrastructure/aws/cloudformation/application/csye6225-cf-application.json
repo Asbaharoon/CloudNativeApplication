@@ -64,6 +64,10 @@
             "KeyType" : "HASH"
           }
         ],
+        "TimeToLiveSpecification": {
+            "AttributeName": "ttl",
+            "Enabled": true
+        },
         "ProvisionedThroughput" : {
           "ReadCapacityUnits" : "5",
           "WriteCapacityUnits" : "5"
