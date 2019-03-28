@@ -1,8 +1,4 @@
 package com.web.cloudapp.Controllers;
-<<<<<<< HEAD
-=======
-
->>>>>>> origin
 import com.timgroup.statsd.StatsDClient;
 import com.web.cloudapp.model.User;
 import com.web.cloudapp.service.LogService;
@@ -18,10 +14,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-<<<<<<< HEAD
-
-=======
->>>>>>> origin
 
 @RestController
 public class LoginController {
