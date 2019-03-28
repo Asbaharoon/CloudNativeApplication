@@ -37,6 +37,15 @@
   }, 
   "s3Attachment": {
     "Type": "String"
+  },
+  "s3Lamba": {
+    "Type": "String"
+  },
+  "lambaexecRole":{
+    "Type" : "String"
+  },
+  "domainName":{
+    "Type": "String"
   }
  },
  "Resources" : {
@@ -55,6 +64,10 @@
             "KeyType" : "HASH"
           }
         ],
+        "TimeToLiveSpecification": {
+            "AttributeName": "ttl",
+            "Enabled": true
+        },
         "ProvisionedThroughput" : {
           "ReadCapacityUnits" : "5",
           "WriteCapacityUnits" : "5"
@@ -168,8 +181,10 @@
                 },
                 {
                   "Fn::Sub": "echo 'JAVA_OPTS=\"$JAVA_OPTS -Daws.s3.bucketname=${s3Attachment}\"' >> /opt/tomcat/bin/setenv.sh"
-                }
-                ,
+                },
+                {
+                      "Fn::Sub": "echo 'JAVA_OPTS=\"$JAVA_OPTS -Daws.account.id=${accountID}\"' >> /opt/tomcat/bin/setenv.sh"
+                },
                {
                   "Fn::Sub": "echo 'JAVA_OPTS=\"$JAVA_OPTS -Dpublish.metrics=true\"' >> /opt/tomcat/bin/setenv.sh"
                },
@@ -323,6 +338,8 @@
       "Properties": {
         "ManagedPolicyArns": [
           {"Ref": "CloudWatchLogPolicy"},
+    "arn:aws:iam::aws:policy/AmazonS3FullAccess",
+	  "arn:aws:iam::aws:policy/AmazonSNSFullAccess",
 	    "arn:aws:iam::aws:policy/CloudWatchAgentAdminPolicy",
 	    "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
           ],
@@ -411,6 +428,7 @@
           ]
         }
       }
-    }
+    } 
+ 
  }
 }

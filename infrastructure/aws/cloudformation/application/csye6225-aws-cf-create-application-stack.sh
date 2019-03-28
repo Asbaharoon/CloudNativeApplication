@@ -29,12 +29,18 @@ s3codedeploy=$(aws s3api list-buckets --query "Buckets[*].[Name][0]" --output te
 
 s3attachments=$(aws s3api list-buckets --query "Buckets[*].[Name][1]" --output text)
 
+s3lamba=$(aws s3api list-buckets --query "Buckets[*].[Name][2]" --output text)
+
+export lambaexecRole="arn:aws:iam::"$account_id":role/LambdaExecutionRole"
+
+domainName=$(aws route53 list-hosted-zones --query "HostedZones[*].[Name]" --output text)
+
 applicationName="csye6225-webapp"
 
 webSecurityGroupTagValue=csye6225-webapp
 dbSecurityGroupTagValue=csye6225-rds
 
-stackId=$(aws cloudformation create-stack --stack-name $stack_name --template-body file://csye6225-cf-application.json --parameters ParameterKey=webSecurityGroupTag,ParameterValue=$webSecurityGroupTagValue ParameterKey=dbSecurityGroupTag,ParameterValue=$dbSecurityGroupTagValue ParameterKey=keyTag,ParameterValue=$keyTagValue ParameterKey=amiId,ParameterValue=$amiId ParameterKey=ec2InstanceTag,ParameterValue=$ec2InstanceTagVal ParameterKey=DBUSER,ParameterValue=$DBUSER ParameterKey=DBPWD,ParameterValue=$DBPWD ParameterKey=accountID,ParameterValue=$account_id ParameterKey=awsRegion,ParameterValue=$region ParameterKey=s3CodeDeploy,ParameterValue=$s3codedeploy ParameterKey=s3Attachment,ParameterValue=$s3attachments ParameterKey=applicationName,ParameterValue=$applicationName  --query [StackId] --capabilities CAPABILITY_NAMED_IAM --output text)
+stackId=$(aws cloudformation create-stack --stack-name $stack_name --template-body file://csye6225-cf-application.json --parameters ParameterKey=webSecurityGroupTag,ParameterValue=$webSecurityGroupTagValue ParameterKey=dbSecurityGroupTag,ParameterValue=$dbSecurityGroupTagValue ParameterKey=keyTag,ParameterValue=$keyTagValue ParameterKey=amiId,ParameterValue=$amiId ParameterKey=ec2InstanceTag,ParameterValue=$ec2InstanceTagVal ParameterKey=DBUSER,ParameterValue=$DBUSER ParameterKey=DBPWD,ParameterValue=$DBPWD ParameterKey=accountID,ParameterValue=$account_id ParameterKey=awsRegion,ParameterValue=$region ParameterKey=s3CodeDeploy,ParameterValue=$s3codedeploy ParameterKey=s3Attachment,ParameterValue=$s3attachments ParameterKey=applicationName,ParameterValue=$applicationName ParameterKey=s3Lamba,ParameterValue=$s3lamba ParameterKey=lambaexecRole,ParameterValue=$lambaexecRole ParameterKey=domainName,ParameterValue=$domainName --query [StackId] --capabilities CAPABILITY_NAMED_IAM --output text)
 
 echo $stackId
 
