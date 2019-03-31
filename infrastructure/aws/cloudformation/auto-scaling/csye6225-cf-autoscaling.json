@@ -11,7 +11,7 @@
   "keyTag" : {
    "Type" : "String"
   },
-  "ec2InstanceTag" : {
+  "autoScaleGroupName" : {
   "Type" : "String"
   },
  "amiId" : {
@@ -46,6 +46,19 @@
   },
   "domainName":{
     "Type": "String"
+  },
+  "topicName":{
+    "Type":"String"
+  },
+  "elbSecurityGroupNameTag":{
+     "Type":"String"
+  },
+
+  "hostedZoneName":{
+     "Type":"String"
+  },
+  "CertificateArn1" : {
+    "Type" : "String"
   }
  },
  "Resources" : {
@@ -76,6 +89,45 @@
       }
 
     },
+      "elbSecurityGroup":{
+         "Type":"AWS::EC2::SecurityGroup",
+         "Properties":{
+            "GroupName":{
+               "Ref":"elbSecurityGroupNameTag"
+            },
+            "GroupDescription":"Security tag for ELB",
+            "SecurityGroupIngress":[
+               {
+                  "CidrIp":"0.0.0.0/0",
+                  "FromPort":22,
+                  "IpProtocol":"tcp",
+                  "ToPort":22
+               },
+               {
+                  "CidrIp":"0.0.0.0/0",
+                  "FromPort":80,
+                  "IpProtocol":"tcp",
+                  "ToPort":80
+               },
+{
+                  "CidrIp":"0.0.0.0/0",
+                  "FromPort":8080,
+                  "IpProtocol":"tcp",
+                  "ToPort":8080
+               },
+               {
+                  "CidrIp":"0.0.0.0/0",
+                  "FromPort":443,
+                  "IpProtocol":"tcp",
+                  "ToPort":443
+               }
+            ],
+            "VpcId":{
+               "Fn::ImportValue":"networkVpcId"
+            }
+        }
+    },
+
   "webServerSecurityGroup" : {
    "Type" : "AWS::EC2::SecurityGroup",
    "Properties" : {
@@ -89,22 +141,12 @@
       "ToPort" : 22
      },
      {
-      "CidrIp" : "0.0.0.0/0",
-      "FromPort" : 80,
-      "IpProtocol" : "tcp",
-      "ToPort" : 80
-     },
-     {
-      "CidrIp" : "0.0.0.0/0",
-      "FromPort" : 443,
-      "IpProtocol" : "tcp",
-      "ToPort" : 443
-     },
-     {
-      "CidrIp" : "0.0.0.0/0",
-      "FromPort" : 8080,
-      "IpProtocol" : "tcp",
-      "ToPort" : 8080
+      "SourceSecurityGroupId":{
+        "Ref":"elbSecurityGroup"
+       },
+      "FromPort":8080,
+      "IpProtocol":"tcp",
+      "ToPort":8080
      }
      ],
     "VpcId" : {"Fn::ImportValue" : "networkVpcId"}
@@ -135,10 +177,19 @@
       } ]
       }
   },
-  "ec2Instance" : {
-   "Type" : "AWS::EC2::Instance",
-    "Properties" : {
-     "Tags" : [ {"Key" : "Name", "Value" : {"Ref" : "ec2InstanceTag"}} ],
+  "asglaunchconfig":{
+         "Type":"AWS::AutoScaling::LaunchConfiguration",
+         "Properties":{
+            "AssociatePublicIpAddress":true,
+            "BlockDeviceMappings":[
+               {
+                  "DeviceName":"/dev/sda1",
+                  "Ebs":{
+                     "VolumeType":"gp2",
+                     "VolumeSize":"16"
+                  }
+               }
+            ],
      "IamInstanceProfile": {
       "Ref": "CodeDeployEC2ServiceRoleInstanceProfile"
      },
@@ -146,17 +197,7 @@
      "KeyName" : { "Ref" : "keyTag" },
      "InstanceType" : "t2.micro",
      "DisableApiTermination" : "false",
-     "BlockDeviceMappings": [
-      {
-       "DeviceName" : "/dev/sda1",
-       "Ebs" : {
-        "VolumeType": "gp2",
-        "VolumeSize": "20"
-       }
-      }
-     ],
-     "SecurityGroupIds" : [{"Ref": "webServerSecurityGroup"}],
-     "SubnetId" : {"Fn::ImportValue" : "publicSubnetOne"},
+     "SecurityGroups" : [{"Ref": "webServerSecurityGroup"}],
      "UserData": {
           "Fn::Base64": {
             "Fn::Join": [
@@ -194,6 +235,9 @@
               {
                   "Fn::Sub": "echo 'JAVA_OPTS=\"$JAVA_OPTS -Dmetrics.server.port=8125\"' >> /opt/tomcat/bin/setenv.sh"
                },
+               {
+                  "Fn::Sub": "echo 'JAVA_OPTS=\"$JAVA_OPTS -Daws.topic.name=${topicName}\"' >> /opt/tomcat/bin/setenv.sh"
+               },
                 "chmod +x /opt/tomcat/bin/setenv.sh",
                 "chown tomcat:tomcat /opt/tomcat/bin/setenv.sh",
                 "sudo service tomcat restart "
@@ -204,6 +248,145 @@
       }
     }
    },
+      "asg":{
+         "Type":"AWS::AutoScaling::AutoScalingGroup",
+         "Properties":{
+            "AutoScalingGroupName":{"Ref":"autoScaleGroupName"},
+            "Cooldown":"60",
+            "DesiredCapacity":"3",
+            "LaunchConfigurationName":{
+               "Ref":"asglaunchconfig"
+            },
+            "TargetGroupARNs":[
+               {
+                  "Ref":"ELBTargetGroup"
+               }
+            ],
+            "MaxSize":"10",
+            "MinSize":"3",
+            "Tags":[
+               {
+                  "Key":"Name",
+                  "Value":"EC2Instance",
+                  "PropagateAtLaunch":true
+               }
+            ],
+            "VPCZoneIdentifier":[
+               {
+                  "Fn::ImportValue":"publicSubnetOne"
+               }
+            ]
+         }
+      },
+      "ELBTargetGroup":{
+         "Type":"AWS::ElasticLoadBalancingV2::TargetGroup",
+         "Properties":{
+            "Name":"myEC2InstancesTargetGroup",
+            "Port":8080,
+            "Protocol":"HTTP",
+            "HealthCheckIntervalSeconds" : 30,
+            "UnhealthyThresholdCount" : 5,
+            "HealthyThresholdCount" : 3,
+            "HealthCheckPath" : "/",
+            "HealthCheckTimeoutSeconds" : 5,
+            "TargetType":"instance",
+            "VpcId":{
+               "Fn::ImportValue":"networkVpcId"
+            }
+         }
+      },
+      "ElasticLoadBalancer":{
+         "Type":"AWS::ElasticLoadBalancingV2::LoadBalancer",
+         "Properties":{
+            "Name":"myELB",
+            "Scheme":"internet-facing",
+            "Subnets":[
+               {
+                  "Fn::ImportValue":"publicSubnetOne"
+               },
+               {
+                  "Fn::ImportValue":"publicSubnetTwo"
+               }
+            ],
+            "SecurityGroups":[
+               {
+                  "Ref":"elbSecurityGroup"
+               }
+            ],
+            "Type":"application",
+            "IpAddressType":"ipv4"
+         }
+      },
+      "ElasticLoadBalanceListener":{
+         "Type":"AWS::ElasticLoadBalancingV2::Listener",
+         "Properties":{
+            "Certificates":[
+               {
+                  "CertificateArn":{
+                     "Ref":"CertificateArn1"
+                  }
+               }
+            ],
+            "DefaultActions":[
+               {
+                  "Type":"forward",
+                  "TargetGroupArn":{
+                     "Ref":"ELBTargetGroup"
+                  }
+               }
+            ],
+            "LoadBalancerArn":{
+               "Ref":"ElasticLoadBalancer"
+            },
+            "Port":443,
+            "Protocol":"HTTPS"
+         }
+      },
+    "ElasticLoadBalanceListener2" : {
+           "Type" : "AWS::ElasticLoadBalancingV2::Listener",
+           "DependsOn":["ELBTargetGroup","ElasticLoadBalancer"],
+           "Properties" : {
+
+             "DefaultActions" : [{
+               "Type" : "redirect",
+               "RedirectConfig" : {
+                   "Port" : "443",
+                   "Protocol" : "HTTPS",
+                   "StatusCode" : "HTTP_301"
+               }
+             }],
+             "LoadBalancerArn" : { "Ref" : "ElasticLoadBalancer" },
+             "Port" : "80",
+             "Protocol" : "HTTP"
+
+           }
+         },
+      "DomainRecordSet":{
+         "Type":"AWS::Route53::RecordSet",
+         "Properties":{
+            "AliasTarget":{
+               "DNSName":{
+                  "Fn::GetAtt":[
+                     "ElasticLoadBalancer",
+                     "DNSName"
+                  ]
+               },
+               "HostedZoneId":{
+                  "Fn::GetAtt":[
+                     "ElasticLoadBalancer",
+                     "CanonicalHostedZoneID"
+                  ]
+               }
+            },
+            "HostedZoneName":{
+               "Ref":"hostedZoneName"
+            },
+            "Name":{
+               "Ref":"domainName"
+            },
+            "Type":"A"
+         }
+      },
  "myDBSubnetGroup" : {
       "Type" : "AWS::RDS::DBSubnetGroup",
       "Properties" : {
@@ -230,6 +413,81 @@
         "VPCSecurityGroups" : [{"Ref": "dbSecurityGroup"}]
       }
    },
+      "WebServerScaleUpPolicy":{
+         "Type":"AWS::AutoScaling::ScalingPolicy",
+         "Properties":{
+            "AdjustmentType":"ChangeInCapacity",
+            "AutoScalingGroupName":{
+               "Ref":"asg"
+            },
+            "Cooldown":"60",
+            "ScalingAdjustment":"1"
+         }
+      },
+      "WebServerScaleDownPolicy":{
+         "Type":"AWS::AutoScaling::ScalingPolicy",
+         "Properties":{
+            "AdjustmentType":"ChangeInCapacity",
+            "AutoScalingGroupName":{
+               "Ref":"asg"
+            },
+            "Cooldown":"60",
+            "ScalingAdjustment":"-1"
+         }
+      },
+      "CPUAlarmHigh":{
+         "Type":"AWS::CloudWatch::Alarm",
+         "Properties":{
+            "AlarmDescription":"Scale-up if CPU > 10% for 10 minutes",
+            "MetricName":"CPUUtilization",
+            "Namespace":"AWS/EC2",
+            "Statistic":"Average",
+            "Period":"300",
+            "EvaluationPeriods":"2",
+            "Threshold":"10",
+            "AlarmActions":[
+               {
+                  "Ref":"WebServerScaleUpPolicy"
+               }
+            ],
+            "Dimensions":[
+               {
+                  "Name":"AutoScalingGroupName",
+                  "Value":{
+                     "Ref":"asg"
+                  }
+               }
+            ],
+            "ComparisonOperator":"GreaterThanThreshold"
+         }
+      },
+      "CPUAlarmLow":{
+         "Type":"AWS::CloudWatch::Alarm",
+         "Properties":{
+            "AlarmDescription":"Scale-down if CPU < 5% for 10 minutes",
+            "MetricName":"CPUUtilization",
+            "Namespace":"AWS/EC2",
+            "Statistic":"Average",
+            "Period":"300",
+            "EvaluationPeriods":"2",
+            "Threshold":"5",
+            "AlarmActions":[
+               {
+                  "Ref":"WebServerScaleDownPolicy"
+               }
+            ],
+            "Dimensions":[
+               {
+                  "Name":"AutoScalingGroupName",
+                  "Value":{
+                     "Ref":"asg"
+                  }
+               }
+            ],
+            "ComparisonOperator":"LessThanThreshold"
+         }
+      },
+
     "CodeDeployEC2S3": {
       "Type": "AWS::IAM::Policy",
       "Properties": {
