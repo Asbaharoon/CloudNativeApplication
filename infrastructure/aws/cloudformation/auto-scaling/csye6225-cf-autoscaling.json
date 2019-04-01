@@ -196,7 +196,6 @@
      "ImageId" : { "Ref" : "amiId" },
      "KeyName" : { "Ref" : "keyTag" },
      "InstanceType" : "t2.micro",
-     "DisableApiTermination" : "false",
      "SecurityGroups" : [{"Ref": "webServerSecurityGroup"}],
      "UserData": {
           "Fn::Base64": {
@@ -676,7 +675,7 @@
           {
             "Type": "KEY_AND_VALUE",
             "Key": "Name",
-            "Value": {"Ref" : "ec2InstanceTag"}
+            "Value": "EC2Instance"
           }
         ],
         "ServiceRoleArn": {
