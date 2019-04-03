@@ -233,8 +233,8 @@
                },
                 "chmod +x /opt/tomcat/bin/setenv.sh",
                 "chown tomcat:tomcat /opt/tomcat/bin/setenv.sh",
-                "sudo service tomcat restart "
-
+                "sudo service tomcat restart ",
+                "sudo touch /opt/tomcat/samplefile"
               ]
            ]
          }
@@ -245,7 +245,7 @@
          "Type":"AWS::AutoScaling::AutoScalingGroup",
          "Properties":{
             "AutoScalingGroupName":{"Ref":"autoScaleGroupName"},
-            "Cooldown":"60",
+            "Cooldown":"10",
             "DesiredCapacity":"3",
             "LaunchConfigurationName":{
                "Ref":"asglaunchconfig"
@@ -413,7 +413,7 @@
             "AutoScalingGroupName":{
                "Ref":"asg"
             },
-            "Cooldown":"60",
+            "Cooldown":"10",
             "ScalingAdjustment":"1"
          }
       },
@@ -424,7 +424,7 @@
             "AutoScalingGroupName":{
                "Ref":"asg"
             },
-            "Cooldown":"60",
+            "Cooldown":"10",
             "ScalingAdjustment":"-1"
          }
       },
