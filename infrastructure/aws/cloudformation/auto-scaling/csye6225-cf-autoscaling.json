@@ -285,6 +285,9 @@
             "TargetType":"instance",
             "VpcId":{
                "Fn::ImportValue":"networkVpcId"
+            },
+            "Matcher":{
+              "HttpCode" : "401"
             }
          }
       },
@@ -662,7 +665,7 @@
         },
         "DeploymentStyle": {
           "DeploymentType": "IN_PLACE",
-          "DeploymentOption": "WITHOUT_TRAFFIC_CONTROL"
+          "DeploymentOption": "WITH_TRAFFIC_CONTROL"
         },
         "AutoRollbackConfiguration": {
 
