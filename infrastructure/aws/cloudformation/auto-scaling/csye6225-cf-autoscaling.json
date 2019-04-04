@@ -276,7 +276,7 @@
             "HealthCheckIntervalSeconds" : 30,
             "UnhealthyThresholdCount" : 5,
             "HealthyThresholdCount" : 3,
-            "HealthCheckPath" : "/CloudApp",
+            "HealthCheckPath" : "/CloudApp/",
             "HealthCheckPort" : 8080,
             "HealthCheckProtocol" : "HTTP",
             "HealthCheckTimeoutSeconds" : 7,
