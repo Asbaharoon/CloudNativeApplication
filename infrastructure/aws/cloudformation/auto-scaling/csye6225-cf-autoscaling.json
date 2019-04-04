@@ -654,6 +654,12 @@
         },
         "DeploymentConfigName": "CodeDeployDefault.AllAtOnce",
         "DeploymentGroupName": "csye6225-webapp-deployment",
+          "AutoScalingGroups" : [{"Ref" : "asg"}],
+          "LoadBalancerInfo" : {
+          "TargetGroupInfoList" : [ 
+            { "Name": { "Fn::GetAtt": ["ELBTargetGroup", "TargetGroupName"] } }
+           ]
+        },
         "DeploymentStyle": {
           "DeploymentType": "IN_PLACE",
           "DeploymentOption": "WITHOUT_TRAFFIC_CONTROL"
