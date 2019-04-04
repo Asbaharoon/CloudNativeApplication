@@ -1,0 +1,692 @@
+{
+ "AWSTemplateFormatVersion" : "2010-09-09",
+ "Description":"Creating ",
+ "Parameters": {
+   "webSecurityGroupTag" : {
+   "Type" : "String"
+  },
+  "dbSecurityGroupTag" : {
+   "Type" : "String"
+  },
+  "keyTag" : {
+   "Type" : "String"
+  },
+  "autoScaleGroupName" : {
+  "Type" : "String"
+  },
+ "amiId" : {
+  "Type" : "String"
+  },
+  "DBUSER" : {
+  "Type" : "String"
+  },
+   "DBPWD" : {
+  "Type" : "String"
+  },
+  "accountID": {
+    "Type": "String"
+  },
+  "awsRegion": {
+    "Type": "String"
+  },
+  "applicationName": {
+    "Type": "String"
+  },
+  "s3CodeDeploy": {
+    "Type": "String"
+  }, 
+  "s3Attachment": {
+    "Type": "String"
+  },
+  "domainName":{
+    "Type": "String"
+  },
+  "topicName":{
+    "Type":"String"
+  },
+  "elbSecurityGroupNameTag":{
+     "Type":"String"
+  },
+
+  "hostedZoneName":{
+     "Type":"String"
+  },
+  "CertificateArn1" : {
+    "Type" : "String"
+  }
+ },
+ "Resources" : {
+    "DynamoDBTable" : {
+      "Type" : "AWS::DynamoDB::Table",
+      "Properties" : {
+        "AttributeDefinitions" : [
+          {
+            "AttributeName" : "id",
+            "AttributeType" : "S"
+          }
+        ],
+        "KeySchema" : [
+          {
+            "AttributeName" : "id",
+            "KeyType" : "HASH"
+          }
+        ],
+        "TimeToLiveSpecification": {
+            "AttributeName": "ttl",
+            "Enabled": true
+        },
+        "ProvisionedThroughput" : {
+          "ReadCapacityUnits" : "5",
+          "WriteCapacityUnits" : "5"
+        },
+        "TableName" : "csye6225"
+      }
+
+    },
+      "elbSecurityGroup":{
+         "Type":"AWS::EC2::SecurityGroup",
+         "Properties":{
+            "GroupName":{
+               "Ref":"elbSecurityGroupNameTag"
+            },
+            "GroupDescription":"Security tag for ELB",
+            "SecurityGroupIngress":[
+              {
+                  "CidrIp":"0.0.0.0/0",
+                  "FromPort":8080,
+                  "IpProtocol":"tcp",
+                  "ToPort":8080
+               },
+               {
+                  "CidrIp":"0.0.0.0/0",
+                  "FromPort":443,
+                  "IpProtocol":"tcp",
+                  "ToPort":443
+               }
+            ],
+            "VpcId":{
+               "Fn::ImportValue":"networkVpcId"
+            }
+        }
+    },
+
+  "webServerSecurityGroup" : {
+   "Type" : "AWS::EC2::SecurityGroup",
+   "Properties" : {
+    "GroupName" : {"Ref" : "webSecurityGroupTag"},
+    "GroupDescription" : "Security tag for web server",
+    "SecurityGroupIngress" : [
+     {
+      "CidrIp" : "0.0.0.0/0",
+      "FromPort" : 22,
+      "IpProtocol" : "tcp",
+      "ToPort" : 22
+     },
+     {
+      "FromPort":8080,
+      "IpProtocol":"tcp",
+      "ToPort":8080,
+      "SourceSecurityGroupId" : {"Ref":"elbSecurityGroup"}
+     },
+      {
+      "IpProtocol":"tcp",
+      "FromPort":443,
+      "ToPort":443,
+      "SourceSecurityGroupId" : {"Ref":"elbSecurityGroup"}
+      }
+     ],
+    "VpcId" : {"Fn::ImportValue" : "networkVpcId"}
+   },
+   "DependsOn":"elbSecurityGroup"
+  },
+  "dbSecurityGroup" : {
+    "Type" : "AWS::EC2::SecurityGroup",
+    "Properties" : {
+     "GroupName" : {"Ref" : "dbSecurityGroupTag"},
+     "GroupDescription" : "Security tag for web server",
+     "SecurityGroupIngress" : [
+      {
+       "SourceSecurityGroupId" : {"Ref" : "webServerSecurityGroup"},
+       "FromPort" : 3306,
+       "IpProtocol" : "tcp",
+       "ToPort" : 3306
+      }
+      ],
+     "VpcId" : {"Fn::ImportValue" : "networkVpcId"}
+    }
+  },
+  "CodeDeployEC2ServiceRoleInstanceProfile": {
+    "Type": "AWS::IAM::InstanceProfile",
+    "Properties": {
+      "Path": "/",
+      "Roles": [{
+        "Ref": "CodeDeployEC2ServiceRole"
+      } ]
+      }
+  },
+  "asglaunchconfig":{
+         "Type":"AWS::AutoScaling::LaunchConfiguration",
+         "Properties":{
+            "AssociatePublicIpAddress":true,
+            "BlockDeviceMappings":[
+               {
+                  "DeviceName":"/dev/sda1",
+                  "Ebs":{
+                     "VolumeType":"gp2",
+                     "DeleteOnTermination":"true",
+                     "VolumeSize":"16"
+                  }
+               }
+            ],
+     "IamInstanceProfile": {
+      "Ref": "CodeDeployEC2ServiceRoleInstanceProfile"
+     },
+     "ImageId" : { "Ref" : "amiId" },
+     "KeyName" : { "Ref" : "keyTag" },
+     "InstanceType" : "t2.micro",
+     "SecurityGroups" : [{"Ref": "webServerSecurityGroup"}],
+     "UserData": {
+          "Fn::Base64": {
+            "Fn::Join": [
+              "\n",
+              [
+                "#!/bin/bash -xe ",
+                "echo '#!/bin/sh' >> /opt/tomcat/bin/setenv.sh ",
+                {
+                  "Fn::Sub": "sudo echo \"JAVA_OPTS=\\\"\\$JAVA_OPTS -Dspring.profiles.active=dev\\\"\" >> /opt/tomcat/bin/setenv.sh"
+                },
+                {
+                  "Fn::Sub": "echo 'JAVA_OPTS=\"$JAVA_OPTS -Dspring.datasource.url=jdbc:mysql://${myRDSInstance.Endpoint.Address}:3306/csye6225\"' >> /opt/tomcat/bin/setenv.sh"
+                },
+                {
+                  "Fn::Sub": "echo 'JAVA_OPTS=\"$JAVA_OPTS -Dspring.datasource.username=${DBUSER}\"' >> /opt/tomcat/bin/setenv.sh"
+                },
+                {
+                  "Fn::Sub": "echo 'JAVA_OPTS=\"$JAVA_OPTS -Dspring.datasource.password=${DBPWD}\"' >> /opt/tomcat/bin/setenv.sh"
+                },
+                {
+                  "Fn::Sub": "echo 'JAVA_OPTS=\"$JAVA_OPTS -Dcloud.aws.region.static=us-east-1\"' >> /opt/tomcat/bin/setenv.sh"
+                },
+                {
+                  "Fn::Sub": "echo 'JAVA_OPTS=\"$JAVA_OPTS -Daws.s3.bucketname=${s3Attachment}\"' >> /opt/tomcat/bin/setenv.sh"
+                },
+                {
+                      "Fn::Sub": "echo 'JAVA_OPTS=\"$JAVA_OPTS -Daws.account.id=${accountID}\"' >> /opt/tomcat/bin/setenv.sh"
+                },
+               {
+                  "Fn::Sub": "echo 'JAVA_OPTS=\"$JAVA_OPTS -Dpublish.metrics=true\"' >> /opt/tomcat/bin/setenv.sh"
+               },
+               {
+                  "Fn::Sub": "echo 'JAVA_OPTS=\"$JAVA_OPTS -Dmetrics.server.hostname=localhost\"' >> /opt/tomcat/bin/setenv.sh"
+               },
+              {
+                  "Fn::Sub": "echo 'JAVA_OPTS=\"$JAVA_OPTS -Dmetrics.server.port=8125\"' >> /opt/tomcat/bin/setenv.sh"
+               },
+               {
+                  "Fn::Sub": "echo 'JAVA_OPTS=\"$JAVA_OPTS -Daws.topic.name=${topicName}\"' >> /opt/tomcat/bin/setenv.sh"
+               },
+                "chmod +x /opt/tomcat/bin/setenv.sh",
+                "chown tomcat:tomcat /opt/tomcat/bin/setenv.sh",
+                "sudo service tomcat restart ",
+                "sudo touch /opt/tomcat/samplefile"
+              ]
+           ]
+         }
+      }
+    }
+   },
+      "asg":{
+         "Type":"AWS::AutoScaling::AutoScalingGroup",
+         "Properties":{
+            "AutoScalingGroupName":{"Ref":"autoScaleGroupName"},
+            "Cooldown":"60",
+            "DesiredCapacity":"3",
+            "LaunchConfigurationName":{
+               "Ref":"asglaunchconfig"
+            },
+            "TargetGroupARNs":[
+               {
+                  "Ref":"ELBTargetGroup"
+               }
+            ],
+            "MaxSize":"10",
+            "MinSize":"3",
+            "HealthCheckType" : "EC2",
+            "HealthCheckGracePeriod" : 60,
+            "Tags":[
+               {
+                  "Key":"Name",
+                  "Value":"EC2Instance",
+                  "PropagateAtLaunch":true
+               }
+            ],
+            "VPCZoneIdentifier":[
+               {
+                  "Fn::ImportValue":"publicSubnetOne"
+               }
+            ]
+         }
+      },
+      "ELBTargetGroup":{
+         "Type":"AWS::ElasticLoadBalancingV2::TargetGroup",
+         "Properties":{
+            "Name":"myEC2InstancesTargetGroup",
+            "Port":8080,
+            "Protocol":"HTTP",
+            "HealthCheckIntervalSeconds" : 30,
+            "UnhealthyThresholdCount" : 5,
+            "HealthyThresholdCount" : 3,
+            "HealthCheckPath" : "/CloudApp/",
+            "HealthCheckPort" : 8080,
+            "HealthCheckProtocol" : "HTTP",
+            "HealthCheckTimeoutSeconds" : 7,
+            "TargetType":"instance",
+            "VpcId":{
+               "Fn::ImportValue":"networkVpcId"
+            },
+            "Matcher":{
+              "HttpCode" : "401"
+            }
+         }
+      },
+      "ElasticLoadBalancer":{
+         "Type":"AWS::ElasticLoadBalancingV2::LoadBalancer",
+         "Properties":{
+            "Name":"myELB",
+            "Scheme":"internet-facing",
+            "Subnets":[
+               {
+                  "Fn::ImportValue":"publicSubnetOne"
+               },
+               {
+                  "Fn::ImportValue":"publicSubnetTwo"
+               }
+            ],
+            "SecurityGroups":[
+               {
+                  "Ref":"elbSecurityGroup"
+               }
+            ],
+            "Type":"application",
+            "IpAddressType":"ipv4"
+         }
+      },
+      "ElasticLoadBalanceListener":{
+         "Type":"AWS::ElasticLoadBalancingV2::Listener",
+         "Properties":{
+            "Certificates":[
+               {
+                  "CertificateArn":{
+                     "Ref":"CertificateArn1"
+                  }
+               }
+            ],
+            "DefaultActions":[
+               {
+                  "Type":"forward",
+                  "TargetGroupArn":{
+                     "Ref":"ELBTargetGroup"
+                  }
+               }
+            ],
+            "LoadBalancerArn":{
+               "Ref":"ElasticLoadBalancer"
+            },
+            "Port":443,
+            "Protocol":"HTTPS"
+         }
+      },
+    "ElasticLoadBalanceListener2" : {
+           "Type" : "AWS::ElasticLoadBalancingV2::Listener",
+           "DependsOn":["ELBTargetGroup","ElasticLoadBalancer"],
+           "Properties" : {
+
+             "DefaultActions" : [{
+               "Type" : "redirect",
+               "RedirectConfig" : {
+                   "Port" : "443",
+                   "Protocol" : "HTTPS",
+                   "StatusCode" : "HTTP_301"
+               }
+             }],
+             "LoadBalancerArn" : { "Ref" : "ElasticLoadBalancer" },
+             "Port" : "8080",
+             "Protocol" : "HTTP"
+
+           }
+         },
+      "DomainRecordSet":{
+         "Type":"AWS::Route53::RecordSet",
+         "Properties":{
+            "AliasTarget":{
+               "DNSName":{
+                  "Fn::GetAtt":[
+                     "ElasticLoadBalancer",
+                     "DNSName"
+                  ]
+               },
+               "HostedZoneId":{
+                  "Fn::GetAtt":[
+                     "ElasticLoadBalancer",
+                     "CanonicalHostedZoneID"
+                  ]
+               }
+            },
+            "HostedZoneName":{
+               "Ref":"hostedZoneName"
+            },
+            "Name":{
+               "Ref":"domainName"
+            },
+            "Type":"A"
+         }
+      },
+ "myDBSubnetGroup" : {
+      "Type" : "AWS::RDS::DBSubnetGroup",
+      "Properties" : {
+         "DBSubnetGroupDescription" : "Subnet description of db subnets",
+         "SubnetIds" : [ {"Fn::ImportValue" : "publicSubnetTwo"},
+          {"Fn::ImportValue" : "publicSubnetThree"} ],
+         "Tags" : [ {"Key" : "Name", "Value" : "dbSubnetGroup"} ]
+      }
+   },
+    "myRDSInstance" : {
+      "Type" : "AWS::RDS::DBInstance",
+      "Properties" : {
+         "DBName" : "csye6225",
+         "AllocatedStorage" : "20",
+         "Engine" : "MySQL",
+        "EngineVersion" : "5.6.37",
+        "DBInstanceClass" : "db.t2.medium",
+        "MultiAZ" : false,
+        "DBInstanceIdentifier" : "csye6225-spring2018",
+        "MasterUsername" : { "Ref" : "DBUSER" },
+        "MasterUserPassword" : { "Ref" : "DBPWD" },
+        "DBSubnetGroupName" : {"Ref" : "myDBSubnetGroup"},
+        "PubliclyAccessible" : true,
+        "VPCSecurityGroups" : [{"Ref": "dbSecurityGroup"}]
+      }
+   },
+      "WebServerScaleUpPolicy":{
+         "Type":"AWS::AutoScaling::ScalingPolicy",
+         "Properties":{
+            "AdjustmentType":"ChangeInCapacity",
+            "AutoScalingGroupName":{
+               "Ref":"asg"
+            },
+            "Cooldown":"60",
+            "ScalingAdjustment":"1"
+         }
+      },
+      "WebServerScaleDownPolicy":{
+         "Type":"AWS::AutoScaling::ScalingPolicy",
+         "Properties":{
+            "AdjustmentType":"ChangeInCapacity",
+            "AutoScalingGroupName":{
+               "Ref":"asg"
+            },
+            "Cooldown":"60",
+            "ScalingAdjustment":"-1"
+         }
+      },
+      "CPUAlarmHigh":{
+         "Type":"AWS::CloudWatch::Alarm",
+         "Properties":{
+            "AlarmDescription":"Scale-up if CPU > 10% for 10 minutes",
+            "MetricName":"CPUUtilization",
+            "Namespace":"AWS/EC2",
+            "Statistic":"Average",
+            "Period":"300",
+            "EvaluationPeriods":"2",
+            "Threshold":"10",
+            "AlarmActions":[
+               {
+                  "Ref":"WebServerScaleUpPolicy"
+               }
+            ],
+            "Dimensions":[
+               {
+                  "Name":"AutoScalingGroupName",
+                  "Value":{
+                     "Ref":"asg"
+                  }
+               }
+            ],
+            "ComparisonOperator":"GreaterThanThreshold"
+         }
+      },
+      "CPUAlarmLow":{
+         "Type":"AWS::CloudWatch::Alarm",
+         "Properties":{
+            "AlarmDescription":"Scale-down if CPU < 5% for 10 minutes",
+            "MetricName":"CPUUtilization",
+            "Namespace":"AWS/EC2",
+            "Statistic":"Average",
+            "Period":"300",
+            "EvaluationPeriods":"2",
+            "Threshold":"5",
+            "AlarmActions":[
+               {
+                  "Ref":"WebServerScaleDownPolicy"
+               }
+            ],
+            "Dimensions":[
+               {
+                  "Name":"AutoScalingGroupName",
+                  "Value":{
+                     "Ref":"asg"
+                  }
+               }
+            ],
+            "ComparisonOperator":"LessThanThreshold"
+         }
+      },
+
+    "CodeDeployEC2S3": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": "CodeDeploy-EC2-S3",
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Action": [
+                "s3:Get*",
+                "s3:List*"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:aws:s3:::",
+                      {
+                        "Ref": "s3CodeDeploy"
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:aws:s3:::",
+                      {
+                        "Ref": "s3CodeDeploy"
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ]
+            },
+	    {
+	    "Action": [
+                "s3:DeleteObject",
+                "s3:Put*"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:aws:s3:::",
+                      {
+                        "Ref": "s3Attachment"
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:aws:s3:::",
+                      {
+                        "Ref": "s3Attachment"
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ]
+	    }
+          ]
+        },
+        "Roles": [
+          {
+            "Ref": "CodeDeployEC2ServiceRole"
+          }
+        ]
+      }
+    },
+
+	"CloudWatchLogPolicy": {
+		"Type": "AWS::IAM::ManagedPolicy",
+		"Properties": {
+		"ManagedPolicyName": "CloudWatchPolicyName",
+		"PolicyDocument": {
+			"Version": "2012-10-17",
+			"Statement": [
+				{
+				"Effect": "Allow",
+				"Action": [
+					"logs:CreateLogGroup",
+					"logs:CreateLogStream",
+					"logs:PutLogEvents",
+					"logs:DescribeLogStreams"
+					],
+				"Resource": [
+					"arn:aws:logs:*:*:*"
+					]
+				}]
+				  }
+			}
+		},
+    "CodeDeployEC2ServiceRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "ManagedPolicyArns": [
+          {"Ref": "CloudWatchLogPolicy"},
+    "arn:aws:iam::aws:policy/AmazonS3FullAccess",
+	  "arn:aws:iam::aws:policy/AmazonSNSFullAccess",
+	    "arn:aws:iam::aws:policy/CloudWatchAgentAdminPolicy",
+	    "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
+          ],
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "ec2.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        },
+        "Path": "/",
+        "RoleName": "CodeDeployEC2ServiceRole"
+      }
+    },
+    "CodeDeployServiceRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "ManagedPolicyArns": [
+          "arn:aws:iam::aws:policy/service-role/AWSCodeDeployRole"
+        ],
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "codedeploy.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        },
+        "Path": "/",
+        "RoleName": "CodeDeployServiceRole"
+      }
+    },
+    "CodeDeployApplication": {
+      "Type": "AWS::CodeDeploy::Application",
+      "Properties": {
+        "ApplicationName": {"Ref" : "applicationName"}
+      }
+    },
+    "DeploymentGroup": {
+      "Type": "AWS::CodeDeploy::DeploymentGroup",
+      "DependsOn":["asg","ELBTargetGroup","CodeDeployApplication"],
+      "Properties": {
+        "ApplicationName": {
+          "Ref": "CodeDeployApplication"
+        },
+        "DeploymentConfigName": "CodeDeployDefault.AllAtOnce",
+        "DeploymentGroupName": "csye6225-webapp-deployment",
+          "AutoScalingGroups" : [{"Ref" : "asg"}],
+          "LoadBalancerInfo" : {
+          "TargetGroupInfoList" : [ 
+            { "Name": { "Fn::GetAtt": ["ELBTargetGroup", "TargetGroupName"] } }
+           ]
+        },
+        "DeploymentStyle": {
+          "DeploymentType": "IN_PLACE",
+          "DeploymentOption": "WITH_TRAFFIC_CONTROL"
+        },
+        "AutoRollbackConfiguration": {
+
+          "Enabled": "true",
+
+          "Events": [ "DEPLOYMENT_FAILURE" ]
+
+        },
+        "ServiceRoleArn": {
+          "Fn::GetAtt": [
+            "CodeDeployServiceRole",
+            "Arn"
+          ]
+        }
+      }
+    } 
+ },
+    "Outputs" : {
+    "LoadBalancer" : {
+          "Description" : "The Load balancer",
+          "Value" : {"Ref" : "ElasticLoadBalancer"},
+          "Export" : {"Name" : "ApplicationLoadBalancerArn"}
+          }
+   }
+}
