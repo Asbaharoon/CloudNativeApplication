@@ -19,7 +19,7 @@
           <stringProp name="LoopController.loops">1</stringProp>
         </elementProp>
         <stringProp name="ThreadGroup.num_threads">1000</stringProp>
-        <stringProp name="ThreadGroup.ramp_time">300</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">400</stringProp>
         <boolProp name="ThreadGroup.scheduler">false</boolProp>
         <stringProp name="ThreadGroup.duration"></stringProp>
         <stringProp name="ThreadGroup.delay"></stringProp>
@@ -71,7 +71,7 @@
           <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="User CSV Data Set Config" enabled="true">
             <stringProp name="delimiter">,</stringProp>
             <stringProp name="fileEncoding">UTF-8</stringProp>
-            <stringProp name="filename">/Users/vinyaskaushiktr/Sem4/jmeter/userdetails.txt</stringProp>
+            <stringProp name="filename">/Users/vinyaskaushiktr/Sem4/cloud/csye6225/dev/csye6225-spring2019/jmeter/userdetails.txt</stringProp>
             <boolProp name="ignoreFirstLine">false</boolProp>
             <boolProp name="quotedData">false</boolProp>
             <boolProp name="recycle">true</boolProp>
@@ -159,7 +159,7 @@
           <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="User CSV Data Set Config" enabled="true">
             <stringProp name="delimiter">,</stringProp>
             <stringProp name="fileEncoding">UTF-8</stringProp>
-            <stringProp name="filename">/Users/vinyaskaushiktr/Sem4/jmeter/userdetails.txt</stringProp>
+            <stringProp name="filename">/Users/vinyaskaushiktr/Sem4/cloud/csye6225/dev/csye6225-spring2019/jmeter/userdetails.txt</stringProp>
             <boolProp name="ignoreFirstLine">false</boolProp>
             <boolProp name="quotedData">false</boolProp>
             <boolProp name="recycle">true</boolProp>
@@ -237,8 +237,8 @@
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Attachment Request" enabled="true">
           <elementProp name="HTTPsampler.Files" elementType="HTTPFileArgs">
             <collectionProp name="HTTPFileArgs.files">
-              <elementProp name="/Users/vinyaskaushiktr/Desktop/dockerscreenshot.png" elementType="HTTPFileArg">
-                <stringProp name="File.path">/Users/vinyaskaushiktr/Desktop/dockerscreenshot.png</stringProp>
+              <elementProp name="/Users/vinyaskaushiktr/Docker/Docker - Networking" elementType="HTTPFileArg">
+                <stringProp name="File.path">/Users/vinyaskaushiktr/Docker/Docker - Networking</stringProp>
                 <stringProp name="File.paramname">file</stringProp>
                 <stringProp name="File.mimetype"></stringProp>
               </elementProp>
@@ -266,7 +266,7 @@
           <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="User CSV Data Set Config" enabled="true">
             <stringProp name="delimiter">,</stringProp>
             <stringProp name="fileEncoding">UTF-8</stringProp>
-            <stringProp name="filename">/Users/vinyaskaushiktr/Sem4/jmeter/userdetails.txt</stringProp>
+            <stringProp name="filename">/Users/vinyaskaushiktr/Sem4/cloud/csye6225/dev/csye6225-spring2019/jmeter/userdetails.txt</stringProp>
             <boolProp name="ignoreFirstLine">false</boolProp>
             <boolProp name="quotedData">false</boolProp>
             <boolProp name="recycle">true</boolProp>
@@ -332,35 +332,32 @@
             <name>saveConfig</name>
             <value class="SampleSaveConfiguration">
               <time>true</time>
-              <latency>true</latency>
+              <latency>false</latency>
               <timestamp>true</timestamp>
               <success>true</success>
               <label>true</label>
               <code>true</code>
               <message>true</message>
               <threadName>true</threadName>
-              <dataType>true</dataType>
+              <dataType>false</dataType>
               <encoding>false</encoding>
-              <assertions>true</assertions>
-              <subresults>true</subresults>
-              <responseData>false</responseData>
+              <assertions>false</assertions>
+              <subresults>false</subresults>
+              <responseData>true</responseData>
               <samplerData>false</samplerData>
-              <xml>false</xml>
-              <fieldNames>true</fieldNames>
-              <responseHeaders>false</responseHeaders>
+              <xml>true</xml>
+              <fieldNames>false</fieldNames>
+              <responseHeaders>true</responseHeaders>
               <requestHeaders>false</requestHeaders>
               <responseDataOnError>false</responseDataOnError>
               <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
               <assertionsResultsToSave>0</assertionsResultsToSave>
-              <bytes>true</bytes>
-              <sentBytes>true</sentBytes>
               <url>true</url>
               <threadCounts>true</threadCounts>
-              <idleTime>true</idleTime>
               <connectTime>true</connectTime>
             </value>
           </objProp>
-          <stringProp name="filename"></stringProp>
+          <stringProp name="filename">/Users/vinyaskaushiktr/Sem4/cloud/csye6225/dev/csye6225-spring2019/jmeter/jmeterlogs.xml</stringProp>
         </ResultCollector>
         <hashTree/>
       </hashTree>
