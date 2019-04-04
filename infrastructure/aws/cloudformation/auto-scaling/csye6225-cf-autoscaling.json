@@ -91,19 +91,7 @@
             },
             "GroupDescription":"Security tag for ELB",
             "SecurityGroupIngress":[
-               {
-                  "CidrIp":"0.0.0.0/0",
-                  "FromPort":22,
-                  "IpProtocol":"tcp",
-                  "ToPort":22
-               },
-               {
-                  "CidrIp":"0.0.0.0/0",
-                  "FromPort":80,
-                  "IpProtocol":"tcp",
-                  "ToPort":80
-               },
-{
+              {
                   "CidrIp":"0.0.0.0/0",
                   "FromPort":8080,
                   "IpProtocol":"tcp",
@@ -135,16 +123,21 @@
       "ToPort" : 22
      },
      {
-      "SourceSecurityGroupId":{
-        "Ref":"elbSecurityGroup"
-       },
       "FromPort":8080,
       "IpProtocol":"tcp",
-      "ToPort":8080
-     }
+      "ToPort":8080,
+      "SourceSecurityGroupId" : {"Ref":"elbSecurityGroup"}
+     },
+      {
+      "IpProtocol":"tcp",
+      "FromPort":443,
+      "ToPort":443,
+      "SourceSecurityGroupId" : {"Ref":"elbSecurityGroup"}
+      }
      ],
     "VpcId" : {"Fn::ImportValue" : "networkVpcId"}
-   }
+   },
+   "DependsOn":"elbSecurityGroup"
   },
   "dbSecurityGroup" : {
     "Type" : "AWS::EC2::SecurityGroup",
@@ -180,6 +173,7 @@
                   "DeviceName":"/dev/sda1",
                   "Ebs":{
                      "VolumeType":"gp2",
+                     "DeleteOnTermination":"true",
                      "VolumeSize":"16"
                   }
                }
@@ -245,7 +239,7 @@
          "Type":"AWS::AutoScaling::AutoScalingGroup",
          "Properties":{
             "AutoScalingGroupName":{"Ref":"autoScaleGroupName"},
-            "Cooldown":"10",
+            "Cooldown":"60",
             "DesiredCapacity":"3",
             "LaunchConfigurationName":{
                "Ref":"asglaunchconfig"
@@ -257,6 +251,8 @@
             ],
             "MaxSize":"10",
             "MinSize":"3",
+            "HealthCheckType" : "EC2",
+            "HealthCheckGracePeriod" : 60,
             "Tags":[
                {
                   "Key":"Name",
@@ -281,7 +277,9 @@
             "UnhealthyThresholdCount" : 5,
             "HealthyThresholdCount" : 3,
             "HealthCheckPath" : "/",
-            "HealthCheckTimeoutSeconds" : 5,
+            "HealthCheckPort" : 8080,
+            "HealthCheckProtocol" : "HTTP",
+            "HealthCheckTimeoutSeconds" : 7,
             "TargetType":"instance",
             "VpcId":{
                "Fn::ImportValue":"networkVpcId"
@@ -352,7 +350,7 @@
                }
              }],
              "LoadBalancerArn" : { "Ref" : "ElasticLoadBalancer" },
-             "Port" : "80",
+             "Port" : "8080",
              "Protocol" : "HTTP"
 
            }
@@ -416,7 +414,7 @@
             "AutoScalingGroupName":{
                "Ref":"asg"
             },
-            "Cooldown":"10",
+            "Cooldown":"60",
             "ScalingAdjustment":"1"
          }
       },
@@ -427,7 +425,7 @@
             "AutoScalingGroupName":{
                "Ref":"asg"
             },
-            "Cooldown":"10",
+            "Cooldown":"60",
             "ScalingAdjustment":"-1"
          }
       },
@@ -651,6 +649,7 @@
     },
     "DeploymentGroup": {
       "Type": "AWS::CodeDeploy::DeploymentGroup",
+      "DependsOn":["asg","ELBTargetGroup","CodeDeployApplication"],
       "Properties": {
         "ApplicationName": {
           "Ref": "CodeDeployApplication"
@@ -674,13 +673,6 @@
           "Events": [ "DEPLOYMENT_FAILURE" ]
 
         },
-        "Ec2TagFilters": [
-          {
-            "Type": "KEY_AND_VALUE",
-            "Key": "Name",
-            "Value": "EC2Instance"
-          }
-        ],
         "ServiceRoleArn": {
           "Fn::GetAtt": [
             "CodeDeployServiceRole",
