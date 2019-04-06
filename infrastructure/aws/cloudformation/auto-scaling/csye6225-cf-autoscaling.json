@@ -102,6 +102,12 @@
                   "FromPort":443,
                   "IpProtocol":"tcp",
                   "ToPort":443
+               },
+               {
+                  "CidrIp":"0.0.0.0/0",
+                  "FromPort":80,
+                  "IpProtocol":"tcp",
+                  "ToPort":80
                }
             ],
             "VpcId":{
@@ -239,7 +245,7 @@
          "Type":"AWS::AutoScaling::AutoScalingGroup",
          "Properties":{
             "AutoScalingGroupName":{"Ref":"autoScaleGroupName"},
-            "Cooldown":"60",
+            "Cooldown":"20",
             "DesiredCapacity":"3",
             "LaunchConfigurationName":{
                "Ref":"asglaunchconfig"
@@ -350,7 +356,7 @@
                }
              }],
              "LoadBalancerArn" : { "Ref" : "ElasticLoadBalancer" },
-             "Port" : "8080",
+             "Port" : "80",
              "Protocol" : "HTTP"
 
            }
@@ -414,7 +420,7 @@
             "AutoScalingGroupName":{
                "Ref":"asg"
             },
-            "Cooldown":"60",
+            "Cooldown":"20",
             "ScalingAdjustment":"1"
          }
       },
@@ -425,7 +431,7 @@
             "AutoScalingGroupName":{
                "Ref":"asg"
             },
-            "Cooldown":"60",
+            "Cooldown":"20",
             "ScalingAdjustment":"-1"
          }
       },
