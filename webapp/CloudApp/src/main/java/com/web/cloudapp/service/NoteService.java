@@ -15,7 +15,6 @@ import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
-@Transactional
 public class NoteService {
 
     @Autowired
@@ -29,6 +28,7 @@ public class NoteService {
 
 
     //Get a Note given note Id
+    @Transactional
     public Note getNote(String id){
         try {
             Note n = noteRepository.findById(id).orElseThrow(
@@ -43,6 +43,7 @@ public class NoteService {
     }
 
     //Update a note
+    @Transactional
     public boolean updateNote(String id, Note uNote) {
         try {
             Note n = getNote(id);
@@ -61,6 +62,7 @@ public class NoteService {
     }
 
     //Create a new Note
+    @Transactional
     public boolean createNote(Note n){
         try {
             if (checkNote(n)) {
@@ -78,6 +80,7 @@ public class NoteService {
     }
 
     //Delete a Note
+    @Transactional
     public boolean deleteNote(String id ) throws Exception{
         Note n;
         try {
@@ -110,6 +113,7 @@ public class NoteService {
     }
 
     //Get all the notes of a User
+    @Transactional
     public List<Note> getAllNotes(){
         User u = userService.getUserName();
         return noteRepository.getAll(u);

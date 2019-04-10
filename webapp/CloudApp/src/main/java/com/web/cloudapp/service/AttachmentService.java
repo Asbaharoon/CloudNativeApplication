@@ -45,6 +45,7 @@ public class AttachmentService {
     private LogService logService;
 
     //Get All Attachments of a Note
+    @Transactional
     public List<Attachment> getAllAttachments(String noteId){
         try {
             Note n = noteService.getNote(noteId);
@@ -57,6 +58,7 @@ public class AttachmentService {
     }
 
     //Create a new Attachment
+    @Transactional
     public Attachment addAttachment(String noteId, MultipartFile attachment)throws Exception {
         try {
             Note n = noteService.getNote(noteId);
@@ -75,6 +77,7 @@ public class AttachmentService {
     }
 
     //Updating an Attachment
+    @Transactional
     public boolean updateAttachment(String noteId, String attachmentId, MultipartFile attachment) throws Exception{
         try {
             Attachment a = attachmentRepo.findById(attachmentId).orElseThrow(() -> new ResourceNotFound("attachment", "Id", attachmentId));
@@ -97,6 +100,7 @@ public class AttachmentService {
     }
 
     //Deleting an Attachment
+    @Transactional
     public boolean deleteAttachment(String noteId, String attachmentId) throws Exception{
         try {
             Attachment a = attachmentRepo.findById(attachmentId).orElseThrow(() -> new BadRequest("Attachment doesn't exists"));
