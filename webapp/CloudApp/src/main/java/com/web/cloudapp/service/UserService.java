@@ -80,7 +80,7 @@ public class UserService implements UserDetailsService {
             //Check for username
             if (username == null || username.equals("")) throw new BadRequest("User name cannot be empty");
             else {
-                String ePattern = "^\\w+[\\w-\\.]*\\@\\w+((-\\w+)|(\\w*))\\.[a-z]{2,3}\\.[a-z]{2,3}$";
+                String ePattern = "^\\w+[\\w-\\.]*\\@\\w+((-\\w+)|(\\w*))(\\.[a-z]{2,3}){1,2}$";
                 Pattern p = Pattern.compile(ePattern);
                 Matcher m = p.matcher(username);
                 if (m.matches()) {
@@ -156,7 +156,7 @@ public class UserService implements UserDetailsService {
         try {
             if (username == null || username.equals("")) throw new BadRequest("User name cannot be empty");
             else {
-                String ePattern = "^\\w+[\\w-\\.]*\\@\\w+((-\\w+)|(\\w*))\\.[a-z]{2,3}$";
+                String ePattern = "^\\w+[\\w-\\.]*\\@\\w+((-\\w+)|(\\w*))(\\.[a-z]{2,3}){1,2}$";
                 Pattern p = Pattern.compile(ePattern);
                 Matcher m = p.matcher(username);
                 if (m.matches()) {
