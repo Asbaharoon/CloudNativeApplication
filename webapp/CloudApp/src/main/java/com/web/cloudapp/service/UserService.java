@@ -43,7 +43,6 @@ public class UserService implements UserDetailsService {
     @Value("${aws.account.id}")
     private String accId;
     @Override
-    @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         try {
 
@@ -73,7 +72,6 @@ public class UserService implements UserDetailsService {
     }
 
     //Check for credentials
-    @Transactional
     public boolean checkCredentials(User user) throws RuntimeException{
         String username = user.getUserName(),password=user.getPassword();
         try {
@@ -107,7 +105,6 @@ public class UserService implements UserDetailsService {
 
 
     //Getting the current user
-    @Transactional
     public User getUserName() {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -122,7 +119,6 @@ public class UserService implements UserDetailsService {
     }
 
     //Creating new User
-    @Transactional
     public boolean createUser(User user) {
 
         try {
