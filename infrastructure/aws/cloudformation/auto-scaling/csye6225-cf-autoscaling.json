@@ -541,7 +541,7 @@
             "MetricName":"CPUUtilization",
             "Namespace":"AWS/EC2",
             "Statistic":"Average",
-            "Period":"200",
+            "Period":"300",
             "EvaluationPeriods":"2",
             "Threshold":"10",
             "AlarmActions":[
