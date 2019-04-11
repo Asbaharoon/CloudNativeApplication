@@ -20,15 +20,24 @@
 * Postman
 * Git
 * CircleCI
+* Jmeter
+* Kali Linux - Owasp ZAP
+* DynamoDB
 * AWS
 
 ## Cloud Native Application 
 
 ### User Functionality
 
-User Creation: Send the POST request http://localhost:8080/user/register, if user doesnot exists user gets created with message "Registered Succesfully", else we get message "User already exists" .
+* User Creation: Send the POST request http://localhost:8080/user/register, if user doesnot exists user gets created with message "Registered Succesfully", else we get message "User already exists" .
 
-Send the Get request http://localhost:8080/ and select Basic Auth after succesfully authenticating the request we get the current time else error message will be displayed "Unauthorised".
+* Send the Get request http://localhost:8080/ and select Basic Auth after succesfully authenticating the request we get the current time else error message will be displayed "Unauthorised".
+
+| Endpoint | Request Type | Functionality |
+| --------- | --------- | --------- |
+| /user/register | POST | Create a User |
+| / | GET | Get current TimeStamp |
+
 
 ### Note Functionality 
 
@@ -64,6 +73,16 @@ Send the Get request http://localhost:8080/ and select Basic Auth after succesfu
 | /note/{idNotes}/attachments/{idAttachments} | PUT | Update file identified by 'idAttachments' attached to the note identified by the 'id' |
 | note/{idNotes}/attachments/{idAttachments} | DELETE | Delete file identified by 'idAttachments' attached to the transaction identified by the 'id'|
 
+### Reset Password Functionality
+
+* As a user, I want to be able to request reset password link by calling /reset API endpoint.
+* As a user, I expect the web application to send a message on password_reset SNS topic for the email service function to    actually send email and track the active tokens in DynamoDB.
+
+| Endpoint | Request Type | Functionality |
+| --------- | --------- | --------- |
+| /reset | POST | Post password reset request |
+
+
 ## Deploy Instructions
 
 * Run the CircleCI build then the code will be deployed in EC2
@@ -73,6 +92,9 @@ Send the Get request http://localhost:8080/ and select Basic Auth after succesfu
 
 ## Unit Tests
 The CloudappApplicationTests Junit file which is present in Test folder.
+
+## Load Tests
+Do the load testing using LoadTesting.jmx in jmeter once all the stacks are up and running.
 
 ## CI
 CircleCI is Continuous Integration, a development practice which is being used by software teams allowing them to to build, test and deploy applications easier and quicker on multiple platforms.
@@ -87,6 +109,8 @@ curl -u TOKEN \
      -d build_parameters[CIRCLE_JOB]=build \
      https://circleci.com/api/v1.1/project/github/[username]/[repository-name]/tree/master
 ```
+
+
 
 
 

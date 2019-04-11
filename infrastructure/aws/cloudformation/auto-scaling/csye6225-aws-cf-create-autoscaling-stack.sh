@@ -22,17 +22,30 @@ if [ -z "$autoScaleGroupName" ]; then
   exit 1
 fi
 
-CERTIFICATE_ARN=$(aws acm list-certificates --query "CertificateSummaryList[0].CertificateArn" --output text)
+CERTIFICATE_ARN1=$(aws acm list-certificates --query "CertificateSummaryList[0].CertificateArn" --output text)
 
-echo $CERTIFICATE_ARN
+if [ -z "$CERTIFICATE_ARN1" ]; then
+  echo "ERROR: Certificate1 is not available....."
+  exit 1
+fi
+
+echo $CERTIFICATE_ARN1
 
 keyTagValue=$(aws ec2 describe-key-pairs --query "KeyPairs[*].[KeyName]" --output text)
+
+if [ -z "$keyTagValue" ]; then
+  echo "ERROR: EC2 keyValue pair is not available....."
+  exit 1
+fi
 
 echo $keyTagValue
 
 amiId=$(aws ec2 describe-images --filters "Name=tag:Name,Values=centos_assignment4" --query Images[0].ImageId --output text)
 
-echo $amiId
+if [ -z "$amiId" ]; then
+  echo "ERROR: AMI is not available....."
+  exit 1
+fi
 
 account_id=$(aws sts get-caller-identity --query "Account" --output text)
 
@@ -53,13 +66,19 @@ domainName=$(aws route53 list-hosted-zones --query "HostedZones[*].[Name]" --out
 
 echo $domainName
 
-stackId=$(aws cloudformation create-stack --stack-name $stack_name --template-body file://csye6225-cf-autoscaling.json --parameters ParameterKey=webSecurityGroupTag,ParameterValue=$webSecurityGroupTagValue ParameterKey=dbSecurityGroupTag,ParameterValue=$dbSecurityGroupTagValue ParameterKey=keyTag,ParameterValue=$keyTagValue ParameterKey=amiId,ParameterValue=$amiId ParameterKey=elbSecurityGroupNameTag,ParameterValue=$elbSecurityGroupNameTag ParameterKey=DBUSER,ParameterValue=$DBUSER ParameterKey=DBPWD,ParameterValue=$DBPWD ParameterKey=accountID,ParameterValue=$account_id ParameterKey=awsRegion,ParameterValue=$region ParameterKey=s3CodeDeploy,ParameterValue=$s3codedeploy ParameterKey=s3Attachment,ParameterValue=$s3attachments ParameterKey=applicationName,ParameterValue=$applicationName ParameterKey=domainName,ParameterValue=$domainName ParameterKey=CertificateArn1,ParameterValue=$CERTIFICATE_ARN ParameterKey=topicName,ParameterValue=$topicName ParameterKey=hostedZoneName,ParameterValue=$domainName ParameterKey=autoScaleGroupName,ParameterValue=$autoScaleGroupName ParameterKey=elbSecurityGroupNameTag,ParameterValue=$elb_security_group --query [StackId] --capabilities CAPABILITY_NAMED_IAM --output text)
+newdomainName=nowaf.${domainName}
+
+echo $newdomainName
+
+stackId=$(aws cloudformation create-stack --stack-name $stack_name --template-body file://csye6225-cf-autoscaling.json --parameters ParameterKey=webSecurityGroupTag,ParameterValue=$webSecurityGroupTagValue ParameterKey=dbSecurityGroupTag,ParameterValue=$dbSecurityGroupTagValue ParameterKey=keyTag,ParameterValue=$keyTagValue ParameterKey=amiId,ParameterValue=$amiId ParameterKey=elbSecurityGroupNameTag,ParameterValue=$elbSecurityGroupNameTag ParameterKey=DBUSER,ParameterValue=$DBUSER ParameterKey=DBPWD,ParameterValue=$DBPWD ParameterKey=accountID,ParameterValue=$account_id ParameterKey=awsRegion,ParameterValue=$region ParameterKey=s3CodeDeploy,ParameterValue=$s3codedeploy ParameterKey=s3Attachment,ParameterValue=$s3attachments ParameterKey=applicationName,ParameterValue=$applicationName ParameterKey=domainName,ParameterValue=$domainName ParameterKey=CertificateArn1,ParameterValue=$CERTIFICATE_ARN1 ParameterKey=topicName,ParameterValue=$topicName ParameterKey=hostedZoneName,ParameterValue=$domainName ParameterKey=autoScaleGroupName,ParameterValue=$autoScaleGroupName ParameterKey=elbSecurityGroupNameTag,ParameterValue=$elb_security_group ParameterKey=newdomainName,ParameterValue=$newdomainName  --query [StackId] --capabilities CAPABILITY_NAMED_IAM --output text)
 
 echo $stackId
 
 if [ -z $stackId ]; then
     echo 'Error occurred.Dont proceed. TERMINATED'
+    exit 1
 else
     aws cloudformation wait stack-create-complete --stack-name $stack_name
     echo "STACK CREATION COMPLETE."
 fi
+exit 0

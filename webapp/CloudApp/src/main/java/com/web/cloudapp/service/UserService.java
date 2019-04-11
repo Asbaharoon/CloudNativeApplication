@@ -22,6 +22,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -76,7 +77,7 @@ public class UserService implements UserDetailsService {
             //Check for username
             if (username == null || username.equals("")) throw new BadRequest("User name cannot be empty");
             else {
-                String ePattern = "^\\w+[\\w-\\.]*\\@\\w+((-\\w+)|(\\w*))\\.[a-z]{2,3}$";
+                String ePattern = "^\\w+[\\w-\\.]*\\@\\w+((-\\w+)|(\\w*))(\\.[a-z]{2,3}){1,2}$";
                 Pattern p = Pattern.compile(ePattern);
                 Matcher m = p.matcher(username);
                 if (m.matches()) {
@@ -117,8 +118,6 @@ public class UserService implements UserDetailsService {
     }
 
     //Creating new User
-
-
     public boolean createUser(User user) {
 
         try {
@@ -152,7 +151,7 @@ public class UserService implements UserDetailsService {
         try {
             if (username == null || username.equals("")) throw new BadRequest("User name cannot be empty");
             else {
-                String ePattern = "^\\w+[\\w-\\.]*\\@\\w+((-\\w+)|(\\w*))\\.[a-z]{2,3}$";
+                String ePattern = "^\\w+[\\w-\\.]*\\@\\w+((-\\w+)|(\\w*))(\\.[a-z]{2,3}){1,2}$";
                 Pattern p = Pattern.compile(ePattern);
                 Matcher m = p.matcher(username);
                 if (m.matches()) {

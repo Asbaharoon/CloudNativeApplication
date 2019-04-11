@@ -41,6 +41,9 @@
   "domainName":{
     "Type": "String"
   },
+  "newdomainName":{
+    "Type": "String"
+  },
   "topicName":{
     "Type":"String"
   },
@@ -122,12 +125,6 @@
     "GroupName" : {"Ref" : "webSecurityGroupTag"},
     "GroupDescription" : "Security tag for web server",
     "SecurityGroupIngress" : [
-     {
-      "CidrIp" : "0.0.0.0/0",
-      "FromPort" : 22,
-      "IpProtocol" : "tcp",
-      "ToPort" : 22
-     },
      {
       "FromPort":8080,
       "IpProtocol":"tcp",
@@ -245,7 +242,7 @@
          "Type":"AWS::AutoScaling::AutoScalingGroup",
          "Properties":{
             "AutoScalingGroupName":{"Ref":"autoScaleGroupName"},
-            "Cooldown":"20",
+            "Cooldown":"10",
             "DesiredCapacity":"3",
             "LaunchConfigurationName":{
                "Ref":"asglaunchconfig"
@@ -253,6 +250,9 @@
             "TargetGroupARNs":[
                {
                   "Ref":"ELBTargetGroup"
+               },
+               {
+                  "Ref":"ELBTargetGroup2"
                }
             ],
             "MaxSize":"10",
@@ -295,6 +295,29 @@
             }
          }
       },
+      "ELBTargetGroup2":{
+         "Type":"AWS::ElasticLoadBalancingV2::TargetGroup",
+         "Properties":{
+            "Name":"myEC2InstancesTargetGroup2",
+            "Port":8080,
+            "Protocol":"HTTP",
+            "HealthCheckIntervalSeconds" : 30,
+            "UnhealthyThresholdCount" : 5,
+            "HealthyThresholdCount" : 3,
+            "HealthCheckPath" : "/CloudApp/",
+            "HealthCheckPort" : 8080,
+            "HealthCheckProtocol" : "HTTP",
+            "HealthCheckTimeoutSeconds" : 7,
+            "TargetType":"instance",
+            "VpcId":{
+               "Fn::ImportValue":"networkVpcId"
+            },
+            "Matcher":{
+              "HttpCode" : "401"
+            }
+         }
+      }
+      ,
       "ElasticLoadBalancer":{
          "Type":"AWS::ElasticLoadBalancingV2::LoadBalancer",
          "Properties":{
@@ -317,8 +340,31 @@
             "IpAddressType":"ipv4"
          }
       },
+      "ElasticLoadBalancerWithoutWAF":{
+         "Type":"AWS::ElasticLoadBalancingV2::LoadBalancer",
+         "Properties":{
+            "Name":"myELBwithoutWAF",
+            "Scheme":"internet-facing",
+            "Subnets":[
+               {
+                  "Fn::ImportValue":"publicSubnetOne"
+               },
+               {
+                  "Fn::ImportValue":"publicSubnetTwo"
+               }
+            ],
+            "SecurityGroups":[
+               {
+                  "Ref":"elbSecurityGroup"
+               }
+            ],
+            "Type":"application",
+            "IpAddressType":"ipv4"
+         }
+      },
       "ElasticLoadBalanceListener":{
          "Type":"AWS::ElasticLoadBalancingV2::Listener",
+         "DependsOn":["ELBTargetGroup","ElasticLoadBalancer"],
          "Properties":{
             "Certificates":[
                {
@@ -342,25 +388,52 @@
             "Protocol":"HTTPS"
          }
       },
-    "ElasticLoadBalanceListener2" : {
+      "ElasticLoadBalanceListener2" : {
            "Type" : "AWS::ElasticLoadBalancingV2::Listener",
            "DependsOn":["ELBTargetGroup","ElasticLoadBalancer"],
            "Properties" : {
-
              "DefaultActions" : [{
                "Type" : "redirect",
                "RedirectConfig" : {
-                   "Port" : "443",
+                   "Host" : "#{host}",
+                   "Path" : "/#{path}",
+                   "Port" : 443,
                    "Protocol" : "HTTPS",
                    "StatusCode" : "HTTP_301"
                }
              }],
              "LoadBalancerArn" : { "Ref" : "ElasticLoadBalancer" },
-             "Port" : "80",
+             "Port" : 80,
              "Protocol" : "HTTP"
 
            }
          },
+         "ElasticLoadBalanceListener3":{
+         "Type":"AWS::ElasticLoadBalancingV2::Listener",
+         "DependsOn":["ELBTargetGroup2","ElasticLoadBalancerWithoutWAF"],
+         "Properties":{
+            "Certificates":[
+               {
+                  "CertificateArn":{
+                     "Ref":"CertificateArn1"
+                  }
+               }
+            ],
+            "DefaultActions":[
+               {
+                  "Type":"forward",
+                  "TargetGroupArn":{
+                     "Ref":"ELBTargetGroup2"
+                  }
+               }
+            ],
+            "LoadBalancerArn":{
+               "Ref":"ElasticLoadBalancerWithoutWAF"
+            },
+            "Port":443,
+            "Protocol":"HTTPS"
+         }
+      },
       "DomainRecordSet":{
          "Type":"AWS::Route53::RecordSet",
          "Properties":{
@@ -383,6 +456,32 @@
             },
             "Name":{
                "Ref":"domainName"
+            },
+            "Type":"A"
+         }
+      },
+      "DomainRecordSet2":{
+         "Type":"AWS::Route53::RecordSet",
+         "Properties":{
+            "AliasTarget":{
+               "DNSName":{
+                  "Fn::GetAtt":[
+                     "ElasticLoadBalancerWithoutWAF",
+                     "DNSName"
+                  ]
+               },
+               "HostedZoneId":{
+                  "Fn::GetAtt":[
+                     "ElasticLoadBalancerWithoutWAF",
+                     "CanonicalHostedZoneID"
+                  ]
+               }
+            },
+            "HostedZoneName":{
+               "Ref":"hostedZoneName"
+            },
+            "Name":{
+               "Ref":"newdomainName"
             },
             "Type":"A"
          }
@@ -420,7 +519,7 @@
             "AutoScalingGroupName":{
                "Ref":"asg"
             },
-            "Cooldown":"20",
+            "Cooldown":"10",
             "ScalingAdjustment":"1"
          }
       },
@@ -431,7 +530,7 @@
             "AutoScalingGroupName":{
                "Ref":"asg"
             },
-            "Cooldown":"20",
+            "Cooldown":"10",
             "ScalingAdjustment":"-1"
          }
       },
@@ -527,8 +626,8 @@
                 }
               ]
             },
-	    {
-	    "Action": [
+      {
+      "Action": [
                 "s3:DeleteObject",
                 "s3:Put*"
               ],
@@ -558,7 +657,7 @@
                   ]
                 }
               ]
-	    }
+      }
           ]
         },
         "Roles": [
@@ -569,37 +668,37 @@
       }
     },
 
-	"CloudWatchLogPolicy": {
-		"Type": "AWS::IAM::ManagedPolicy",
-		"Properties": {
-		"ManagedPolicyName": "CloudWatchPolicyName",
-		"PolicyDocument": {
-			"Version": "2012-10-17",
-			"Statement": [
-				{
-				"Effect": "Allow",
-				"Action": [
-					"logs:CreateLogGroup",
-					"logs:CreateLogStream",
-					"logs:PutLogEvents",
-					"logs:DescribeLogStreams"
-					],
-				"Resource": [
-					"arn:aws:logs:*:*:*"
-					]
-				}]
-				  }
-			}
-		},
+  "CloudWatchLogPolicy": {
+    "Type": "AWS::IAM::ManagedPolicy",
+    "Properties": {
+    "ManagedPolicyName": "CloudWatchPolicyName",
+    "PolicyDocument": {
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+        "Effect": "Allow",
+        "Action": [
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents",
+          "logs:DescribeLogStreams"
+          ],
+        "Resource": [
+          "arn:aws:logs:*:*:*"
+          ]
+        }]
+          }
+      }
+    },
     "CodeDeployEC2ServiceRole": {
       "Type": "AWS::IAM::Role",
       "Properties": {
         "ManagedPolicyArns": [
           {"Ref": "CloudWatchLogPolicy"},
     "arn:aws:iam::aws:policy/AmazonS3FullAccess",
-	  "arn:aws:iam::aws:policy/AmazonSNSFullAccess",
-	    "arn:aws:iam::aws:policy/CloudWatchAgentAdminPolicy",
-	    "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
+    "arn:aws:iam::aws:policy/AmazonSNSFullAccess",
+      "arn:aws:iam::aws:policy/CloudWatchAgentAdminPolicy",
+      "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
           ],
         "AssumeRolePolicyDocument": {
           "Version": "2012-10-17",
@@ -679,6 +778,13 @@
           "Events": [ "DEPLOYMENT_FAILURE" ]
 
         },
+        "Ec2TagFilters": [
+            {
+              "Type": "KEY_AND_VALUE",
+              "Key": "Name",
+              "Value": "EC2Instance"
+            }
+          ],
         "ServiceRoleArn": {
           "Fn::GetAtt": [
             "CodeDeployServiceRole",
@@ -686,7 +792,7 @@
           ]
         }
       }
-    } 
+    }
  },
     "Outputs" : {
     "LoadBalancer" : {
