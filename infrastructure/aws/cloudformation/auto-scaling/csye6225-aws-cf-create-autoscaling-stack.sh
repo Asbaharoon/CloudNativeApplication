@@ -31,15 +31,6 @@ fi
 
 echo $CERTIFICATE_ARN1
 
-CERTIFICATE_ARN2=$(aws acm list-certificates --query "CertificateSummaryList[1].CertificateArn" --output text)
-
-if [ -z "$CERTIFICATE_ARN2" ]; then
-  echo "ERROR: Certificate2 is not available....."
-  exit 1
-fi
-
-echo $CERTIFICATE_ARN2
-
 keyTagValue=$(aws ec2 describe-key-pairs --query "KeyPairs[*].[KeyName]" --output text)
 
 if [ -z "$keyTagValue" ]; then
@@ -79,7 +70,7 @@ newdomainName=nowaf.${domainName}
 
 echo $newdomainName
 
-stackId=$(aws cloudformation create-stack --stack-name $stack_name --template-body file://csye6225-cf-autoscaling.json --parameters ParameterKey=webSecurityGroupTag,ParameterValue=$webSecurityGroupTagValue ParameterKey=dbSecurityGroupTag,ParameterValue=$dbSecurityGroupTagValue ParameterKey=keyTag,ParameterValue=$keyTagValue ParameterKey=amiId,ParameterValue=$amiId ParameterKey=elbSecurityGroupNameTag,ParameterValue=$elbSecurityGroupNameTag ParameterKey=DBUSER,ParameterValue=$DBUSER ParameterKey=DBPWD,ParameterValue=$DBPWD ParameterKey=accountID,ParameterValue=$account_id ParameterKey=awsRegion,ParameterValue=$region ParameterKey=s3CodeDeploy,ParameterValue=$s3codedeploy ParameterKey=s3Attachment,ParameterValue=$s3attachments ParameterKey=applicationName,ParameterValue=$applicationName ParameterKey=domainName,ParameterValue=$domainName ParameterKey=CertificateArn1,ParameterValue=$CERTIFICATE_ARN1 ParameterKey=topicName,ParameterValue=$topicName ParameterKey=hostedZoneName,ParameterValue=$domainName ParameterKey=autoScaleGroupName,ParameterValue=$autoScaleGroupName ParameterKey=elbSecurityGroupNameTag,ParameterValue=$elb_security_group ParameterKey=newdomainName,ParameterValue=$newdomainName ParameterKey=CertificateArn2,ParameterValue=$CERTIFICATE_ARN2 --query [StackId] --capabilities CAPABILITY_NAMED_IAM --output text)
+stackId=$(aws cloudformation create-stack --stack-name $stack_name --template-body file://csye6225-cf-autoscaling.json --parameters ParameterKey=webSecurityGroupTag,ParameterValue=$webSecurityGroupTagValue ParameterKey=dbSecurityGroupTag,ParameterValue=$dbSecurityGroupTagValue ParameterKey=keyTag,ParameterValue=$keyTagValue ParameterKey=amiId,ParameterValue=$amiId ParameterKey=elbSecurityGroupNameTag,ParameterValue=$elbSecurityGroupNameTag ParameterKey=DBUSER,ParameterValue=$DBUSER ParameterKey=DBPWD,ParameterValue=$DBPWD ParameterKey=accountID,ParameterValue=$account_id ParameterKey=awsRegion,ParameterValue=$region ParameterKey=s3CodeDeploy,ParameterValue=$s3codedeploy ParameterKey=s3Attachment,ParameterValue=$s3attachments ParameterKey=applicationName,ParameterValue=$applicationName ParameterKey=domainName,ParameterValue=$domainName ParameterKey=CertificateArn1,ParameterValue=$CERTIFICATE_ARN1 ParameterKey=topicName,ParameterValue=$topicName ParameterKey=hostedZoneName,ParameterValue=$domainName ParameterKey=autoScaleGroupName,ParameterValue=$autoScaleGroupName ParameterKey=elbSecurityGroupNameTag,ParameterValue=$elb_security_group ParameterKey=newdomainName,ParameterValue=$newdomainName  --query [StackId] --capabilities CAPABILITY_NAMED_IAM --output text)
 
 echo $stackId
 

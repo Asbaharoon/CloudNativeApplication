@@ -56,9 +56,6 @@
   },
   "CertificateArn1" : {
     "Type" : "String"
-  },
-  "CertificateArn2" : {
-    "Type" : "String"
   }
  },
  "Resources" : {
@@ -282,9 +279,9 @@
             "Name":"myEC2InstancesTargetGroup",
             "Port":8080,
             "Protocol":"HTTP",
-            "HealthCheckIntervalSeconds" : 20,
+            "HealthCheckIntervalSeconds" : 30,
             "UnhealthyThresholdCount" : 5,
-            "HealthyThresholdCount" : 2,
+            "HealthyThresholdCount" : 3,
             "HealthCheckPath" : "/CloudApp/",
             "HealthCheckPort" : 8080,
             "HealthCheckProtocol" : "HTTP",
@@ -304,9 +301,9 @@
             "Name":"myEC2InstancesTargetGroup2",
             "Port":8080,
             "Protocol":"HTTP",
-            "HealthCheckIntervalSeconds" : 20,
+            "HealthCheckIntervalSeconds" : 30,
             "UnhealthyThresholdCount" : 5,
-            "HealthyThresholdCount" : 2,
+            "HealthyThresholdCount" : 3,
             "HealthCheckPath" : "/CloudApp/",
             "HealthCheckPort" : 8080,
             "HealthCheckProtocol" : "HTTP",
@@ -418,7 +415,7 @@
             "Certificates":[
                {
                   "CertificateArn":{
-                     "Ref":"CertificateArn2"
+                     "Ref":"CertificateArn1"
                   }
                }
             ],
@@ -544,8 +541,8 @@
             "MetricName":"CPUUtilization",
             "Namespace":"AWS/EC2",
             "Statistic":"Average",
-            "Period":"60",
-            "EvaluationPeriods":"1",
+            "Period":"200",
+            "EvaluationPeriods":"2",
             "Threshold":"10",
             "AlarmActions":[
                {
