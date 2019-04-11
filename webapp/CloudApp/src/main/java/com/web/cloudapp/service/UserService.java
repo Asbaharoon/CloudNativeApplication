@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 @Service
-@Transactional
 public class UserService implements UserDetailsService {
 
     private static int workload=12;

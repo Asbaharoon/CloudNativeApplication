@@ -29,7 +29,7 @@
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
             <collectionProp name="Arguments.arguments"/>
           </elementProp>
-          <stringProp name="HTTPSampler.domain">csye6225s19-tumakunteraghavenv.me</stringProp>
+          <stringProp name="HTTPSampler.domain">nowaf.csye6225s19-tumakunteraghavenv.me</stringProp>
           <stringProp name="HTTPSampler.port"></stringProp>
           <stringProp name="HTTPSampler.protocol">https</stringProp>
           <stringProp name="HTTPSampler.contentEncoding"></stringProp>
@@ -71,7 +71,7 @@
           <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="User CSV Data Set Config" enabled="true">
             <stringProp name="delimiter">,</stringProp>
             <stringProp name="fileEncoding">UTF-8</stringProp>
-            <stringProp name="filename">/Users/vinyaskaushiktr/Sem4/cloud/csye6225/dev/csye6225-spring2019/jmeter/userdetails1.txt</stringProp>
+            <stringProp name="filename">/Users/vinyaskaushiktr/Sem4/cloud/csye6225/dev/csye6225-spring2019/jmeter/userdetails4.txt</stringProp>
             <boolProp name="ignoreFirstLine">false</boolProp>
             <boolProp name="quotedData">false</boolProp>
             <boolProp name="recycle">true</boolProp>
@@ -159,7 +159,7 @@
           <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="User CSV Data Set Config" enabled="true">
             <stringProp name="delimiter">,</stringProp>
             <stringProp name="fileEncoding">UTF-8</stringProp>
-            <stringProp name="filename">/Users/vinyaskaushiktr/Sem4/cloud/csye6225/dev/csye6225-spring2019/jmeter/userdetails1.txt</stringProp>
+            <stringProp name="filename">/Users/vinyaskaushiktr/Sem4/cloud/csye6225/dev/csye6225-spring2019/jmeter/userdetails4.txt</stringProp>
             <boolProp name="ignoreFirstLine">false</boolProp>
             <boolProp name="quotedData">false</boolProp>
             <boolProp name="recycle">true</boolProp>
@@ -171,7 +171,7 @@
           <AuthManager guiclass="AuthPanel" testclass="AuthManager" testname="HTTP Authorization Manager" enabled="true">
             <collectionProp name="AuthManager.auth_list">
               <elementProp name="" elementType="Authorization">
-                <stringProp name="Authorization.url">https://csye6225s19-tumakunteraghavenv.me/CloudApp/note</stringProp>
+                <stringProp name="Authorization.url">https://nowaf.csye6225s19-tumakunteraghavenv.me/CloudApp/note</stringProp>
                 <stringProp name="Authorization.username">${username}</stringProp>
                 <stringProp name="Authorization.password">${password}</stringProp>
                 <stringProp name="Authorization.domain"></stringProp>
@@ -237,8 +237,8 @@
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Attachment Request" enabled="true">
           <elementProp name="HTTPsampler.Files" elementType="HTTPFileArgs">
             <collectionProp name="HTTPFileArgs.files">
-              <elementProp name="/Users/vinyaskaushiktr/Sem4/cloud/csye6225/dev/csye6225-spring2019/jmeter/userdetails6.txt" elementType="HTTPFileArg">
-                <stringProp name="File.path">/Users/vinyaskaushiktr/Sem4/cloud/csye6225/dev/csye6225-spring2019/jmeter/userdetails6.txt</stringProp>
+              <elementProp name="/Users/vinyaskaushiktr/Docker/Docker - Networking" elementType="HTTPFileArg">
+                <stringProp name="File.path">/Users/vinyaskaushiktr/Docker/Docker - Networking</stringProp>
                 <stringProp name="File.paramname">file</stringProp>
                 <stringProp name="File.mimetype"></stringProp>
               </elementProp>
@@ -266,7 +266,7 @@
           <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="User CSV Data Set Config" enabled="true">
             <stringProp name="delimiter">,</stringProp>
             <stringProp name="fileEncoding">UTF-8</stringProp>
-            <stringProp name="filename">/Users/vinyaskaushiktr/Sem4/cloud/csye6225/dev/csye6225-spring2019/jmeter/userdetails1.txt</stringProp>
+            <stringProp name="filename">/Users/vinyaskaushiktr/Sem4/cloud/csye6225/dev/csye6225-spring2019/jmeter/userdetails4.txt</stringProp>
             <boolProp name="ignoreFirstLine">false</boolProp>
             <boolProp name="quotedData">false</boolProp>
             <boolProp name="recycle">true</boolProp>
@@ -278,7 +278,7 @@
           <AuthManager guiclass="AuthPanel" testclass="AuthManager" testname="HTTP Authorization Manager" enabled="true">
             <collectionProp name="AuthManager.auth_list">
               <elementProp name="" elementType="Authorization">
-                <stringProp name="Authorization.url">https://csye6225s19-tumakunteraghavenv.me/CloudApp/note/${noteid_1}/attachments</stringProp>
+                <stringProp name="Authorization.url">https://nowaf.csye6225s19-tumakunteraghavenv.me/CloudApp/note/${noteid_1}/attachments</stringProp>
                 <stringProp name="Authorization.username">${username}</stringProp>
                 <stringProp name="Authorization.password">${password}</stringProp>
                 <stringProp name="Authorization.domain"></stringProp>
